@@ -33,7 +33,7 @@ class Rule(object):
         self.count=count
 
     def __str__(self):
-        string=str(self.count)[:3]+" "+self.lhs
+        string=str(self.count)[:3]+" "+self.lhs+" ->" 
         for r in self.rhs:
             string=string+" "+r
         string=string+"\n"

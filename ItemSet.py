@@ -38,11 +38,11 @@ class ItemSet(object):
                     newitems=cfg.itemRulesLHS(i.head())
                 #check for doubles everywhere
                     for n in newitems:
-                        if not n in closure and not n in partialitems:
+                        if (not n in closure) and (not n in partialitems):
                             partialitems.append(n)
             #remove the just extracted list
             partialitems=partialitems[1:]
-            print i
+
         return closure
 
     def __str__(self):

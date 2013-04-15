@@ -17,13 +17,22 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
+from ItemSet import ItemSet
+from Item import Item
+
 class ParseTable(object):
     """
     """
-    
-    def __init__(self, cfg):
+    itemsets=[]
+    def __init__(self, cfg,Topsymbol):
         """
         cfg is from the CFG class
+        topsymbol indicates the top class grammar most of the time "TOP"
         """
         
+        #creates itemsets
+        startingRules=cfg.itemRulesLHS(Topsymbol)
+        for i in startingRules:
+            print i
+        #itemsets[0]=ItemSet(startingRules,cfg)
         

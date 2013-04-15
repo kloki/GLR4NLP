@@ -18,6 +18,7 @@
 # Koen Klinkers k.klinkers@gmail.com
 from __future__ import division
 from Rule import Rule
+from Item import Item
 
 class CFG(object):
     """context free grammar
@@ -78,3 +79,12 @@ class CFG(object):
                 string=string+str(rule)
 
         return string
+
+    def itemRulesLHS(self,symbol):
+        """
+        Returns all rules in the item format for the item set given a certain LHS
+        """
+        itemRules=[]
+        for rule in self.cfg[symbol]:
+            itemRules.append(Item(rule.lhs,rule.rhs,rule.count,0))
+        return itemRules

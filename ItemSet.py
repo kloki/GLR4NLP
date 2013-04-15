@@ -23,10 +23,27 @@ class ItemSet(object):
     items=[]
     def __init__(self,startingRules,cfg):
         self.items=startingRules
-        self.closure(cfg)
+        self.items=self.closure(self.items,cfg)
 
-    def closure(self,cfg):
-        pass
+    def closure(self,partialitems,cfg):
+        closure=[]
+        while len(partialitems)!=0:
+            #extract an item (no pop because were trying to avoid doubles)
+            i=partialitems[0]
+            #add extracted item to cluse
+            if i not in closure:
+                closure.append(i)
+            #if items head non terminal extract new rules from cfg
+                if i.headNonTerminal():
+                    newitems=cfg.itemRulesLHS(i.head())
+                #check for doubles everywhere
+                    for n in newitems:
+                        if not n in closure and not n in partialitems:
+                            partialitems.append(n)
+            #remove the just extracted list
+            partialitems=partialitems[1:]
+            print i
+        return closure
 
     def __str__(self):
         string=""

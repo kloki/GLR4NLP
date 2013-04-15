@@ -52,7 +52,7 @@ class Item(object):
             return self.rhs[self.dot-1]
 
 
-    def symbolRightOfDot(self):
+    def head(self):
         """
         If dot at end of rule return "$"
         """
@@ -62,5 +62,15 @@ class Item(object):
             return self.rhs[self.dot]
 
 
+    def headNonTerminal(self):
+        """
+        returns True if symbols right of dot is a non terminal
+        """
+        if self.dot==len(self.rhs):
+            return False
+        else:
+            return self.rhs[self.dot].isupper()
+    
+        
     def pushSelf(self):
         return self.__class__(self.lhs,self.rhs,self.count,self.dot+1)

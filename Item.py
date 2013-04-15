@@ -46,13 +46,11 @@ class Item(object):
         return string
     
     def symbolLeftOfDot(self):
-        return self.rhs[self.dot]
+        if self.dot==0:
+            return "START"
+        else:
+            return self.rhs[self.dot-1]
 
-    def symbolLeftOfDotTerminal(self):
-        """
-        Nonterminals start with a capital letter
-        """
-        return self.rhs[self.dot].isupper()
 
     def symbolRightOfDot(self):
         """
@@ -61,7 +59,8 @@ class Item(object):
         if self.dot==len(self.rhs):
             return "$"
         else:
-            return self.rhs[self.dot+1]
+            return self.rhs[self.dot]
+
 
     def pushSelf(self):
         return self.__class__(self.lhs,self.rhs,self.count,self.dot+1)

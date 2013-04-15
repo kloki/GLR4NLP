@@ -23,7 +23,7 @@ from Item import Item
 class ParseTable(object):
     """
     """
-    itemsets=[]
+    itemSets=[]
     def __init__(self, cfg,Topsymbol):
         """
         cfg is from the CFG class
@@ -32,7 +32,13 @@ class ParseTable(object):
         
         #creates itemsets
         startingRules=cfg.itemRulesLHS(Topsymbol)
-        for i in startingRules:
-            print i
-        #itemsets[0]=ItemSet(startingRules,cfg)
-        
+        self.itemSets.append(ItemSet(startingRules,cfg))
+
+
+
+    def __str__(self):
+        string=""
+        for i in self.itemSets:
+            string=string+ "Itemset "+str(self.itemSets.index(i))+"\n"+str(i)
+        return string
+    

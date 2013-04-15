@@ -21,9 +21,15 @@ class ItemSet(object):
     Collection of items for one state
     """
     items=[]
-    def __init__(self,newrules,cfg):
-        self.items.append(newrules)
-    
+    def __init__(self,startingRules,cfg):
+        self.items=startingRules
+        self.closure(cfg)
+
+    def closure(self,cfg):
+        pass
 
     def __str__(self):
-        pass
+        string=""
+        for i in self.items:
+            string=string+str(i)
+        return string

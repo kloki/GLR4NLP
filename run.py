@@ -21,11 +21,12 @@
 from CFG import CFG
 from ParseTable import ParseTable
 
+
 def main():
     cfg=CFG("grammar/wikipedia")
-    print cfg
-    pt=ParseTable(cfg,"S")
     
+    pt=ParseTable(cfg,"S")
+    print pt
 
 #-------------------------------
 if __name__ == "__main__":

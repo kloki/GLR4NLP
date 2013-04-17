@@ -91,6 +91,10 @@ class Item(object):
     def pushSelf(self):
         return self.__class__(self.lhs,self.rhs,self.count,self.dot+1)
 
+    def spawnWithLookahead(self,lookahead):
+        spawn = self.__class__(self.lhs,self.rhs,self.count,self.dot+1)
+        spawn.lookahead=lookahead
+        return spawn
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__

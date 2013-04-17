@@ -28,9 +28,11 @@ class ItemSet(object):
     def __init__(self,startingRules,cfg):
         self.items=startingRules
         (self.items,self.first)=self.closure(self.items,cfg)
-        self.follow.determineFollow(self.items,self.first.getNonTerminals())
-        print self.first
-        print self.follow
+        
+        # To determine follow the LHS of the starting rules need to be assed
+        self.follow.determineFollow(self.items,self.first.getNonTerminals()+self.getLHS(startingRules))
+        self.items=self.setLookAheads(self.items,self.follow)
+
 
     def closure(self,partialitems,cfg):
         #the first terminals are determined during closure
@@ -56,6 +58,26 @@ class ItemSet(object):
             partialitems=partialitems[1:]
 
         return (closure,first)
+
+
+    def getLHS(self,items):
+        """
+        Needed for adding the starting rules terminal to the first set
+        to determine follow set. Net pretty
+        """
+        LHSs=[]
+        for item in items:
+            LHSs.append(item.lhs)
+
+        return LHSs
+    
+    def setLookAheads(self, items,follow):
+        LAitems=[]
+        for item in items:
+            for lookahead in follow.getLookaheads(item.lhs):
+                LAitems.append(item.spawnWithLookahead(lookahead))
+
+        return LAitems
 
     def __str__(self):
         string=""

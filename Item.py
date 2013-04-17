@@ -71,7 +71,23 @@ class Item(object):
         else:
             return self.rhs[self.dot].isupper()
     
+    def getFollowTerminal(self):
+        loc=self.dot+1
+        if loc==len(self.rhs):
+            return "$"
+        elif loc>len(self.rhs):
+            return 0
+        elif self.rhs[loc].isupper():
+            return 0
+        else:
+            return self.rhs[loc]
         
+    def followIsTerminal(self):
+        if self.getFollowTerminal()==0:
+            return False
+        else:
+            return True
+    
     def pushSelf(self):
         return self.__class__(self.lhs,self.rhs,self.count,self.dot+1)
 

@@ -15,18 +15,27 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 from Item import Item
-
+from First import First
+from Follow import Follow
 class ItemSet(object):
     """
     Collection of items for one state
     """
     items=[]
+    first=First()
+    follow=Follow()
+
     def __init__(self,startingRules,cfg):
         self.items=startingRules
-        self.items=self.closure(self.items,cfg)
+        (self.items,self.first)=self.closure(self.items,cfg)
+        self.follow.determineFollow(self.items,self.first.getNonTerminals())
+        print self.first
+        print self.follow
 
     def closure(self,partialitems,cfg):
+        #the first terminals are determined during closure
         closure=[]
+        first=First()
         while len(partialitems)!=0:
             #extract an item (no pop because were trying to avoid doubles)
             i=partialitems[0]
@@ -40,10 +49,13 @@ class ItemSet(object):
                     for n in newitems:
                         if (not n in closure) and (not n in partialitems):
                             partialitems.append(n)
-            #remove the just extracted list
+                #store the FIRST terminals
+                else:
+                    first.addTerminal(i.head(),i.lhs)
+           #remove the just extracted list
             partialitems=partialitems[1:]
 
-        return closure
+        return (closure,first)
 
     def __str__(self):
         string=""

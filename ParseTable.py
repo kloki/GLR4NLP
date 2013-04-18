@@ -31,7 +31,7 @@ class ParseTable(object):
         """
         
         #creates itemsets
-        startingRules=cfg.itemRulesLHS(Topsymbol)#Normally this should be 1 TOP->S
+        startingRules=cfg.itemRulesLHS(Topsymbol)#Normally this should only be 1 TOP->S
         self.itemSets.append(ItemSet(startingRules,cfg))
 
 

@@ -22,16 +22,10 @@ class ItemSet(object):
     Collection of items for one state
     """
     items=[]
-    first=First()
-    follow=Follow()
-
     def __init__(self,startingRules,cfg):
         self.items=startingRules
         (self.items,self.first)=self.closure(self.items,cfg)
         
-        # To determine follow the LHS of the starting rules need to be assed
-        self.follow.determineFollow(self.items,self.first.getNonTerminals()+self.getLHS(startingRules))
-        self.items=self.setLookAheads(self.items,self.follow)
 
 
     def closure(self,partialitems,cfg):
@@ -51,9 +45,6 @@ class ItemSet(object):
                     for n in newitems:
                         if (not n in closure) and (not n in partialitems):
                             partialitems.append(n)
-                #store the FIRST terminals
-                else:
-                    first.addTerminal(i.head(),i.lhs)
            #remove the just extracted list
             partialitems=partialitems[1:]
 

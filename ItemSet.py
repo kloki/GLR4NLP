@@ -15,8 +15,6 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 from Item import Item
-from First import First
-from Follow import Follow
 class ItemSet(object):
     """
     Collection of items for one state

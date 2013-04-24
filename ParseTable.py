@@ -19,20 +19,29 @@
 
 from ItemSet import ItemSet
 from Item import Item
+from First import First
+from Follow import Follow
+
 
 class ParseTable(object):
     """
     """
     itemSets=[]
-    def __init__(self, cfg,Topsymbol):
+    def __init__(self, cfg,topSymbol):
         """
         cfg is from the CFG class
         topsymbol indicates the top class grammar most of the time "TOP"
         """
         
+
+        #create First and Follow sets
+        self.first=First(cfg,topSymbol)
+        print self.first
         #creates itemsets
-        startingRules=cfg.itemRulesLHS(Topsymbol)#Normally this should only be 1 TOP->S
-        self.itemSets.append(ItemSet(startingRules,cfg))
+        startingRules=cfg.itemRulesLHS(topSymbol)#Normally this should only be 1 TOP->S
+        
+
+        #self.itemSets.append(ItemSet(startingRules,cfg))
 
 
 

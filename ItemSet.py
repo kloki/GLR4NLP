@@ -43,7 +43,7 @@ class ItemSet(object):
                     for n in newitems:
                         if (not n in closure) and (not n in partialitems):
                             partialitems.append(n)
-           #remove the just extracted list
+           #remove the just extracted rule
             partialitems=partialitems[1:]
 
         return (closure,first)

@@ -17,13 +17,30 @@
 
 class First(object):
     """
-    Contains all the first terminals for an itemset
+    Contains all the first terminals for an itemset.
+    It is simplified as it assumes that the grammar does not contain a mapping to an empty RHS
+    
+    Add the moment is not very efficient but I wanted to keep it seperate from the ItemSet generation
     """
     
     first={}
-    def __init__(self):
-        pass
-    
+    def __init__(self,cfg,topSymbol):
+        rules=cfg.rulesLHS(topSymbol)
+        usedRules=[]
+        ##next we perform a closure like operation
+        while len(rules)!=0:
+            rule=rules[0]
+            if rule.leftMostIsTerminal():
+                self.addTerminal(rule.getLeftMost(),rule.lhs)
+            else:
+                newRules=cfg.rulesLHS(rule.getLeftMost())
+                for new in newRules:
+                    if new not in usedRules:
+                        rules.append(new)
+            rules=rules[1:]
+            usedRules.append(rule)
+                
+
 
     def __str__(self):
         string=""
@@ -33,13 +50,36 @@ class First(object):
         
 
     def addTerminal(self,terminal, nonTerminal):
+        if nonTerminal not in self.first:
+            self.first[nonTerminal]=[terminal]
+        elif terminal not in self.first[nonTerminal]:    
+            self.first[nonTerminal].append(terminal)
+        
+
+    def addTerminal(self,terminal, nonTerminal):
+        """
+        Add terminal to all items in list
+        If nonterminal create new dictionary entry
+        """
         for key in self.first.iterkeys():
             self.first[key].append(terminal)
         if not nonTerminal in self.first:
             self.first[nonTerminal]=[terminal]
 
+
+
+
+    def appendDict(self,dictionary,key,element):
+        if key in dictionary:
+            dictionary[key].append(element)
+        else:
+            dictionary[key]=[element]
+        return dictionary
+
     def getNonTerminals(self):
         return self.first.keys()
+
+
     # this way == and != work with this object
     def __eq__(self, other):
         if isinstance(other, self.__class__):

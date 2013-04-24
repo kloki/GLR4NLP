@@ -39,3 +39,8 @@ class Rule(object):
         string=string+"\n"
         return string
         
+    def getLeftMost(self):
+        return self.rhs[0]
+
+    def leftMostIsTerminal(self):
+        return  not self.getLeftMost().isupper()

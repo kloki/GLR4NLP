@@ -21,7 +21,7 @@ class ItemSet(object):
     """
     items=[]
     def __init__(self,startingRules,cfg,first):
-        self.items=startingRules
+        self.items=startingRules[:]
         self.items=self.closure(self.items,cfg,first)
 
 
@@ -44,11 +44,10 @@ class ItemSet(object):
                             if follow=="$":#if end if item at lookahead form parrent item
                                 new.lookahead=current.lookahead
                                 partialitems.append(new)
-                            elif follow.isupper():#if non terminal, get from first set
+                            elif follow.isupper():#if non terminal, get all terminals from first set
                                 for terminal in first.getTerminals(follow):
-                                    x=new
-                                    x.lookahead=current.lookahead
-                                    partialitems.append(x)
+                                    dup=new.dubWithLookahead(terminal)
+                                    partialitems.append(dup)
                             else:#if terminal, terminal is look ahead
                                 new.lookahead=follow
                                 partialitems.append(new)
@@ -59,7 +58,29 @@ class ItemSet(object):
 
         return closure
 
+    def getGOTOs(self):
+        """
+        This function returns a list of list containing all items to start a new itemset.
+        Their are grouped by terminal/nonterminal.
+        Thus a new ItemSet needs to be generated per group
+        """
+        newItemsdict={}
+        for item in self.items:
+            if not item.itemFinished():
+                new=item.pushSelf()
+                newItemsdict=self.appendDict(newItemsdict,item.head(),new)
+        
+        newItems=[]
+        for i in newItemsdict.itervalues():
+            newItems.append(i)
+        return newItems
 
+    def appendDict(self,dictionary,key,element):
+        if key in dictionary:
+            dictionary[key].append(element)
+        else:
+            dictionary[key]=[element]
+        return dictionary
 
 
     def __str__(self):

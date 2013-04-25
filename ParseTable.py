@@ -44,8 +44,47 @@ class ParseTable(object):
             item.lookahead="$"
 
         itemSets=[ItemSet(startingRules,cfg,first)]
+        
+        usedGOTOs=[startingRules[:]]
+        newGOTOs=itemSets[0].getGOTOs()
+        
+        while newGOTOs!=[]:
+            #create new itemsset of items generated from previous itemsets
+            itemSets.append(ItemSet(newGOTOs[0],cfg,first))
+            #add used items to used items and remove them from new items
+            usedGOTOs=usedGOTOs+newGOTOs[0]
+            newGOTOs=newGOTOs[1:]
+            #add the new GOTOs from the new itemset, if they not have already been used.
+            
+            #potentialGOTOs=itemSets[-1].getGOTOs()
+            #print potentialGOTOs
+            #newGOTOs=newGOTOs+self.pruneGOTOs(potentialGOTOs,usedGOTOs)
+            
+
+        
+        ##temporary printing
         self.printItemSets(itemSets)
         
+
+
+    def pruneGOTOs(self,new,used):
+        """
+        remove goto groups that have been used before
+        """
+        pruned=[]
+        
+        for n in new:
+            unused=True
+            for u in used:
+                
+                if n==u:
+                    unused=False
+                    break
+            if unused:
+                pruned.append(n)
+        return pruned
+        
+
 
     def printItemSets(self,itemSets):
         string=""

@@ -84,8 +84,7 @@ class CFG(object):
         """
         Returns all rulesgiven a certain LHS
         """
-        rules=self.cfg[symbol]
-        return rules
+        return self.cfg[symbol]
 
 
     def itemRulesLHS(self,symbol):
@@ -94,7 +93,7 @@ class CFG(object):
         """
         itemRules=[]
         for rule in self.cfg[symbol]:
-            itemRules.append(Item(rule.lhs,rule.rhs,rule.count,0))
+            itemRules.append(Item(rule.lhs,rule.rhs,rule.count,0,"none"))
         return itemRules
 
 

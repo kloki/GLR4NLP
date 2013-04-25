@@ -28,14 +28,15 @@ class Item(object):
     count=0
     dot=0
     lookahead="None" 
-    def __init__(self,lhs,rhs,count,dot):
+    def __init__(self,lhs,rhs,count,dot,lookahead):
         """
         """
         self.lhs=lhs
         self.rhs=rhs
         self.count=count
         self.dot=dot
-
+        self.lookahead=lookahead
+    
     def __str__(self):
         string=str(self.count)[:3]+" "+self.lhs+" ->"
         temp=self.rhs[:]
@@ -80,12 +81,24 @@ class Item(object):
         
     
     def pushSelf(self):
-        return self.__class__(self.lhs,self.rhs,self.count,self.dot+1)
+        """
+        Returns a duplicate of itself with the dot moved on placed to right
+       
+        """
+        return self.__class__(self.lhs,self.rhs,self.count,self.dot+1,self.lookahead)
 
-    def spawnWithLookahead(self,lookahead):
-        spawn = self.__class__(self.lhs,self.rhs,self.count,self.dot+1)
-        spawn.lookahead=lookahead
-        return spawn
+    def dubWithLookahead(self,lookahead):
+        return self.__class__(self.lhs,self.rhs,self.count,self.dot,lookahead)
+
+    def itemFinished(self):
+        """
+        Checking if a new item for a new itemset needs to be generated from this item
+        """
+        if self.dot==len(self.rhs):
+            return True
+        else:
+            return False
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__

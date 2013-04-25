@@ -47,18 +47,16 @@ class ParseTable(object):
         
         usedGOTOs=[startingRules[:]]
         newGOTOs=itemSets[0].getGOTOs()
-        
         while newGOTOs!=[]:
             #create new itemsset of items generated from previous itemsets
             itemSets.append(ItemSet(newGOTOs[0],cfg,first))
             #add used items to used items and remove them from new items
-            usedGOTOs=usedGOTOs+newGOTOs[0]
+            usedGOTOs.append(newGOTOs[0])
+
             newGOTOs=newGOTOs[1:]
             #add the new GOTOs from the new itemset, if they not have already been used.
-            
-            #potentialGOTOs=itemSets[-1].getGOTOs()
-            #print potentialGOTOs
-            #newGOTOs=newGOTOs+self.pruneGOTOs(potentialGOTOs,usedGOTOs)
+            potentialGOTOs=itemSets[-1].getGOTOs()
+            newGOTOs=newGOTOs+self.pruneGOTOs(potentialGOTOs,usedGOTOs)
             
 
         
@@ -76,7 +74,6 @@ class ParseTable(object):
         for n in new:
             unused=True
             for u in used:
-                
                 if n==u:
                     unused=False
                     break

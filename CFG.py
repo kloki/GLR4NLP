@@ -44,7 +44,6 @@ class CFG(object):
                     self.addRule(rule[1],rule[2:],int(rule[0]))
         
         self.normaliseCounts()
-    
 
     def addRule(self,lhs,rhs,count):
         """
@@ -73,6 +72,7 @@ class CFG(object):
                 rule.count=rule.count/total
 
     def __str__(self):
+
         string=""
         for key,rules in self.cfg.iteritems():
             for rule in rules:
@@ -84,7 +84,8 @@ class CFG(object):
         """
         Returns all rulesgiven a certain LHS
         """
-        return self.cfg[symbol]
+        rules=self.cfg[symbol]
+        return rules
 
 
     def itemRulesLHS(self,symbol):

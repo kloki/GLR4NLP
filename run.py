@@ -24,10 +24,8 @@ from ParseTable import ParseTable
 
 def main():
     cfg=CFG("grammar/wikipedia")
-    
     pt=ParseTable(cfg,"S")
     print pt
-
 #-------------------------------
 if __name__ == "__main__":
     main()

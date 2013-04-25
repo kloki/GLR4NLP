@@ -44,3 +44,16 @@ class Rule(object):
 
     def leftMostIsTerminal(self):
         return  not self.getLeftMost().isupper()
+
+
+    def getFollowTuples(self):
+        """
+        returns a list of tuples containing Nonterminals and their follow terminal/non terminal
+        """
+        seq=[]
+
+        for i in xrange(1,len(self.rhs)):
+            if not self.rhs[i].isupper():
+                seq.append((self.rhs[i-1],self.rhs[i]))
+    
+        return seq

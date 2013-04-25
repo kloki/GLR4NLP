@@ -26,28 +26,30 @@ from Follow import Follow
 class ParseTable(object):
     """
     """
-    itemSets=[]
     def __init__(self, cfg,topSymbol):
         """
         cfg is from the CFG class
         topsymbol indicates the top class grammar most of the time "TOP"
         """
-        
-
         #create First and Follow sets
-        self.first=First(cfg,topSymbol)
-        print self.first
+        first=First(cfg,topSymbol)
+        print first
         #creates itemsets
-        startingRules=cfg.itemRulesLHS(topSymbol)#Normally this should only be 1 TOP->S
+        
+        #get the starting rules and set the lookahead $
+        #Normally this should only be 1 TOP->S ,$
+        
+        startingRules=cfg.itemRulesLHS(topSymbol)
+        for item in startingRules:
+            item.lookahead="$"
+
+        itemSets=[ItemSet(startingRules,cfg,first)]
+        self.printItemSets(itemSets)
         
 
-        #self.itemSets.append(ItemSet(startingRules,cfg))
-
-
-
-    def __str__(self):
+    def printItemSets(self,itemSets):
         string=""
-        for i in self.itemSets:
-            string=string+ "Itemset "+str(self.itemSets.index(i))+"\n"+str(i)
-        return string
+        for i in itemSets:
+            string=string+ "Itemset "+str(itemSets.index(i))+"\n"+str(i)
+        print string
     

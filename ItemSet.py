@@ -20,20 +20,18 @@ class ItemSet(object):
     Collection of items for one state
     """
     items=[]
-    def __init__(self,startingRules,cfg):
+    def __init__(self,startingRules,cfg,first):
         self.items=startingRules
-        (self.items,self.first)=self.closure(self.items,cfg)
-        
+        self.items=self.closure(self.items,cfg,first)
 
 
-    def closure(self,partialitems,cfg):
+    def closure(self,partialitems,cfg,first):
         #the first terminals are determined during closure
         closure=[]
-        first=First()
         while len(partialitems)!=0:
             #extract an item (no pop because were trying to avoid doubles)
             i=partialitems[0]
-            #add extracted item to cluse
+            #add extracted item to closuse
             if i not in closure:
                 closure.append(i)
             #if items head non terminal extract new rules from cfg
@@ -43,30 +41,14 @@ class ItemSet(object):
                     for n in newitems:
                         if (not n in closure) and (not n in partialitems):
                             partialitems.append(n)
+                            partialitems[-1].lookahead="<>"
            #remove the just extracted rule
             partialitems=partialitems[1:]
 
-        return (closure,first)
+        return closure
 
 
-    def getLHS(self,items):
-        """
-        Needed for adding the starting rules terminal to the first set
-        to determine follow set. Net pretty
-        """
-        LHSs=[]
-        for item in items:
-            LHSs.append(item.lhs)
 
-        return LHSs
-    
-    def setLookAheads(self, items,follow):
-        LAitems=[]
-        for item in items:
-            for lookahead in follow.getLookaheads(item.lhs):
-                LAitems.append(item.spawnWithLookahead(lookahead))
-
-        return LAitems
 
     def __str__(self):
         string=""

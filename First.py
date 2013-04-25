@@ -25,7 +25,7 @@ class First(object):
     
     first={}
     def __init__(self,cfg,topSymbol):
-        rules=cfg.rulesLHS(topSymbol)
+        rules=cfg.rulesLHS(topSymbol)[:]
         usedRules=[]
         ##next we perform a closure like operation
         while len(rules)!=0:
@@ -33,13 +33,13 @@ class First(object):
             if rule.leftMostIsTerminal():
                 self.addTerminal(rule.getLeftMost(),rule.lhs)
             else:
-                newRules=cfg.rulesLHS(rule.getLeftMost())
+                newRules=cfg.rulesLHS(rule.getLeftMost())[:]
                 for new in newRules:
                     if new not in usedRules:
                         rules.append(new)
             rules=rules[1:]
             usedRules.append(rule)
-                
+     
 
 
     def __str__(self):
@@ -48,14 +48,6 @@ class First(object):
             string=string+"FIRST("+key+")="+str(terminals)+"\n"
         return string
         
-
-    def addTerminal(self,terminal, nonTerminal):
-        if nonTerminal not in self.first:
-            self.first[nonTerminal]=[terminal]
-        elif terminal not in self.first[nonTerminal]:    
-            self.first[nonTerminal].append(terminal)
-        
-
     def addTerminal(self,terminal, nonTerminal):
         """
         Add terminal to all items in list
@@ -79,6 +71,8 @@ class First(object):
     def getNonTerminals(self):
         return self.first.keys()
 
+    def getTerminals(self,nonTerminal):
+        return self.first[nonTerminal]
 
     # this way == and != work with this object
     def __eq__(self, other):

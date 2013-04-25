@@ -65,7 +65,7 @@ class First(object):
         else:
             dictionary[key]=[element]
         return dictionary
-
+    
     def getNonTerminals(self):
         return self.first.keys()
 

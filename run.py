@@ -17,13 +17,13 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
-
+import sys
 from CFG import CFG
 from ParseTable import ParseTable
 
 
 def main():
-    cfg=CFG("grammar/wikipedia")
+    cfg=CFG(sys.argv[1])
     pt=ParseTable(cfg,"S")
     print pt
 #-------------------------------

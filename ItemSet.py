@@ -41,15 +41,15 @@ class ItemSet(object):
                     for new in newitems:
                         if (not new in closure) and (not new in partialitems):
                             follow=current.getFollowSymbol()
-                            if follow=="$":
+                            if follow=="$":#if end if item at lookahead form parrent item
                                 new.lookahead=current.lookahead
                                 partialitems.append(new)
-                            elif follow.isupper():
+                            elif follow.isupper():#if non terminal, get from first set
                                 for terminal in first.getTerminals(follow):
                                     x=new
                                     x.lookahead=current.lookahead
                                     partialitems.append(x)
-                            else:
+                            else:#if terminal, terminal is look ahead
                                 new.lookahead=follow
                                 partialitems.append(new)
                             

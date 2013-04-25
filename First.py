@@ -59,8 +59,6 @@ class First(object):
             self.first[nonTerminal]=[terminal]
 
 
-
-
     def appendDict(self,dictionary,key,element):
         if key in dictionary:
             dictionary[key].append(element)
@@ -72,7 +70,7 @@ class First(object):
         return self.first.keys()
 
     def getTerminals(self,nonTerminal):
-        return self.first[nonTerminal]
+        return self.first[nonTerminal][:]
 
     # this way == and != work with this object
     def __eq__(self, other):

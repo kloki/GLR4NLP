@@ -30,18 +30,30 @@ class ItemSet(object):
         closure=[]
         while len(partialitems)!=0:
             #extract an item (no pop because were trying to avoid doubles)
-            i=partialitems[0]
+            current=partialitems[0]
             #add extracted item to closuse
-            if i not in closure:
-                closure.append(i)
+            if current not in closure:
+                closure.append(current)
             #if items head non terminal extract new rules from cfg
-                if i.headNonTerminal():
-                    newitems=cfg.itemRulesLHS(i.head())
+                if current.headNonTerminal():
+                    newitems=cfg.itemRulesLHS(current.head())
                 #check for doubles everywhere
-                    for n in newitems:
-                        if (not n in closure) and (not n in partialitems):
-                            partialitems.append(n)
-                            partialitems[-1].lookahead="<>"
+                    for new in newitems:
+                        if (not new in closure) and (not new in partialitems):
+                            follow=current.getFollowSymbol()
+                            if follow=="$":
+                                new.lookahead=current.lookahead
+                                partialitems.append(new)
+                            elif follow.isupper():
+                                for terminal in first.getTerminals(follow):
+                                    x=new
+                                    x.lookahead=current.lookahead
+                                    partialitems.append(x)
+                            else:
+                                new.lookahead=follow
+                                partialitems.append(new)
+                            
+                            
            #remove the just extracted rule
             partialitems=partialitems[1:]
 

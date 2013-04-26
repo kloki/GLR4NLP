@@ -25,11 +25,26 @@ from First import First
 class ParseTable(object):
     """
     """
-    def __init__(self, cfg,topSymbol):
+    
+    
+
+    def __init__(self):
         """
         cfg is from the CFG class
         topsymbol indicates the top class grammar most of the time "TOP"
         """
+        
+        pass
+    
+    def generateParseTable(self, cfg,topSymbol):
+        """
+        Creates parse table from a given grammar. 
+        At the moment it is quite messy
+        """
+    
+    
+    
+    
         #create First and Follow sets
         first=First(cfg,topSymbol)
         print first
@@ -55,7 +70,6 @@ class ParseTable(object):
             #Stop if done
             if newGOTO==[]:
                 break
-            print newGOTO
             #create New Item set
             itemSets.append(ItemSet(newGOTO,cfg,first))
             #add used items to used items and remove them from new items
@@ -71,6 +85,9 @@ class ParseTable(object):
 
 
     def getNextGOTO(self,newGOTOs,usedGOTOs):
+        """
+        Returns the highest available goto set from the stack
+        """
         newGOTO=newGOTOs[0]
         newGOTOs=newGOTOs[1:]
         

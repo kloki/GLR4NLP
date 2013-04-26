@@ -21,6 +21,15 @@ class First(object):
     It is simplified as it assumes that the grammar does not contain a mapping to an empty RHS
     
     Add the moment is not very efficient but I wanted to keep it seperate from the ItemSet generation
+
+
+    Needs reworking
+
+      S
+     / \
+    NP VP
+
+    VP wont be parsed
     """
     
     first={}

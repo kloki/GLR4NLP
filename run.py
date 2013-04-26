@@ -24,7 +24,8 @@ from ParseTable import ParseTable
 
 def main():
     cfg=CFG(sys.argv[1])
-    pt=ParseTable(cfg,"S")
+    pt=ParseTable()
+    pt.generateParseTable(cfg,sys.argv[2])
     print pt
 #-------------------------------
 if __name__ == "__main__":

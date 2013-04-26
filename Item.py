@@ -70,7 +70,7 @@ class Item(object):
         if self.dot==len(self.rhs):
             return False
         else:
-            return self.rhs[self.dot].isupper()
+            return self.rhs[self.dot][0].isupper()
     
     def getFollowSymbol(self):
         loc=self.dot+1

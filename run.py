@@ -24,6 +24,8 @@ from ParseTable import ParseTable
 
 def main():
     cfg=CFG(sys.argv[1])
+    print cfg.getAllTerminals()
+    print cfg.getAllNonTerminals()
     pt=ParseTable()
     pt.generateParseTable(cfg,sys.argv[2])
     print pt

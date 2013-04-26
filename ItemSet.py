@@ -44,7 +44,7 @@ class ItemSet(object):
                             if follow=="$":#if end if item at lookahead form parrent item
                                 new.lookahead=current.lookahead
                                 partialitems.append(new)
-                            elif follow.isupper():#if non terminal, get all terminals from first set
+                            elif follow[0].isupper():#if non terminal, get all terminals from first set
                                 for terminal in first.getTerminals(follow):
                                     dup=new.dubWithLookahead(terminal)
                                     partialitems.append(dup)

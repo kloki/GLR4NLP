@@ -25,7 +25,8 @@ class CFG(object):
     """
 
     cfg={}
-
+    terminals=[]
+    nonTerminals=[]
     def __init__(self,textfile ):
         """
         Grammar rules are read from text file.
@@ -42,7 +43,7 @@ class CFG(object):
                 if not rule=="":#ignore empty lines
                     rule=rule.split()
                     self.addRule(rule[1],rule[2:],int(rule[0]))
-        
+                    self.checkSymbols(rule[1:])
         self.normaliseCounts()
 
     def addRule(self,lhs,rhs,count):
@@ -58,6 +59,19 @@ class CFG(object):
         else:
             self.cfg[lhs].append(Rule(lhs,rhs,count))
         
+    
+    def checkSymbols(self,symbolsList):
+        """
+        This function book keeps all terminals and non terminals
+        """
+        for symbol in symbolsList:
+            if symbol[0].isupper():
+                if symbol not in self.nonTerminals:
+                    self.nonTerminals.append(symbol)
+            else:
+                if symbol not in self.terminals:
+                    self.terminals.append(symbol)
+
     def normaliseCounts(self):
         """
         
@@ -102,3 +116,10 @@ class CFG(object):
         for values in self.cfg.itervalues():
             rules=rules+values
         return rules
+
+
+    def getAllTerminals(self):
+        return self.terminals[:]
+
+    def getAllNonTerminals(self):
+        return self.nonTerminals[:]

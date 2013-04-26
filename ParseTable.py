@@ -20,7 +20,6 @@
 from ItemSet import ItemSet
 from Item import Item
 from First import First
-from Follow import Follow
 
 
 class ParseTable(object):
@@ -48,15 +47,21 @@ class ParseTable(object):
         usedGOTOs=[startingRules[:]]
         newGOTOs=itemSets[0].getGOTOs()
         while newGOTOs!=[]:
-            #create new itemsset of items generated from previous itemsets
-            itemSets.append(ItemSet(newGOTOs[0],cfg,first))
-            #add used items to used items and remove them from new items
-            usedGOTOs.append(newGOTOs[0])
 
-            newGOTOs=newGOTOs[1:]
-            #add the new GOTOs from the new itemset, if they not have already been used.
-            potentialGOTOs=itemSets[-1].getGOTOs()
-            newGOTOs=newGOTOs+self.pruneGOTOs(potentialGOTOs,usedGOTOs)
+            # get the oldest unsused Itemset, if empty break
+            #create new itemsset of items generated from previous itemsets
+            (newGOTO,newGOTOs)=self.getNextGOTO(newGOTOs,usedGOTOs)
+
+            #Stop if done
+            if newGOTO==[]:
+                break
+            print newGOTO
+            #create New Item set
+            itemSets.append(ItemSet(newGOTO,cfg,first))
+            #add used items to used items and remove them from new items
+            usedGOTOs=usedGOTOs+newGOTO
+            #add the new GOTOs from the new itemset, if they will be checked later if they are already used
+            newGOTOs=newGOTOs+itemSets[-1].getGOTOs()
             
 
         
@@ -65,21 +70,27 @@ class ParseTable(object):
         
 
 
-    def pruneGOTOs(self,new,used):
+    def getNextGOTO(self,newGOTOs,usedGOTOs):
+        newGOTO=newGOTOs[0]
+        newGOTOs=newGOTOs[1:]
+        
+        newGOTO=self.removeUsedGOTOs(newGOTO,usedGOTOs)
+        if newGOTO==[]and newGOTOs!=[]:
+            (newGOTO,newGOTOs)=self.getNextGOTO(newGOTOs,usedGOTOs)
+
+        return (newGOTO,newGOTOs)
+        
+
+    def removeUsedGOTOs(self,new,used):
         """
         remove goto groups that have been used before
         """
-        pruned=[]
+        unused=[]
         
-        for n in new:
-            unused=True
-            for u in used:
-                if n==u:
-                    unused=False
-                    break
-            if unused:
-                pruned.append(n)
-        return pruned
+        for GOTO  in new:
+            if GOTO not in used:
+                unused.append(GOTO)
+        return unused
         
 
 

@@ -27,6 +27,7 @@ class CFG(object):
     cfg={}
     terminals=[]
     nonTerminals=[]
+    ruleIndex=0
     def __init__(self,textfile ):
         """
         Grammar rules are read from text file.
@@ -55,10 +56,12 @@ class CFG(object):
         - `count`: count of rule, integer
         """
         if not lhs in self.cfg:
-            self.cfg[lhs]=[Rule(lhs,rhs,count)]
+            self.cfg[lhs]=[Rule(lhs,rhs,count,self.ruleIndex)]
         else:
-            self.cfg[lhs].append(Rule(lhs,rhs,count))
+            self.cfg[lhs].append(Rule(lhs,rhs,count,self.ruleIndex))
         
+
+        self.ruleIndex+=1
     
     def checkSymbols(self,symbolsList):
         """

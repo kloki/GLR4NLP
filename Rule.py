@@ -25,15 +25,17 @@ class Rule(object):
     lhs=""
     rhs=[]
     count=0
-    def __init__(self,lhs,rhs,count ):
+    index=0
+    def __init__(self,lhs,rhs,count,index ):
         """
         """
         self.lhs=lhs
         self.rhs=rhs
         self.count=count
+        self.index=index
 
     def __str__(self):
-        string=str(self.count)[:3]+" "+self.lhs+" ->" 
+        string=str(self.index)+": "+str(self.count)[:3]+" "+self.lhs+" ->" 
         for r in self.rhs:
             string=string+" "+r
         string=string+"\n"

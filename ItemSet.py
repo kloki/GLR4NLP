@@ -20,8 +20,17 @@ class ItemSet(object):
     Collection of items for one state
     """
     items=[]
-    def __init__(self,startingRules,cfg,first):
+    originState=0
+    state=0
+    startingSymbol=0
+
+    def __init__(self,startingRules,cfg,first,startingSymbol,originState,state):
         self.items=startingRules[:]
+        self.originState=originState
+        self.state=state
+        self.startingSymbol=startingSymbol
+
+
         self.items=self.closure(self.items,cfg,first)
 
 

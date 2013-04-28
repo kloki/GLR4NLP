@@ -110,7 +110,7 @@ class CFG(object):
         """
         itemRules=[]
         for rule in self.cfg[symbol]:
-            itemRules.append(Item(rule.lhs,rule.rhs,rule.count,0,"none"))
+            itemRules.append(Item(rule.lhs,rule.rhs,rule.count,0,"none",rule.index))
         return itemRules
 
 

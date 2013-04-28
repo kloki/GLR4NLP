@@ -28,7 +28,8 @@ class Item(object):
     count=0
     dot=0
     lookahead="None" 
-    def __init__(self,lhs,rhs,count,dot,lookahead):
+    index=0
+    def __init__(self,lhs,rhs,count,dot,lookahead,index):
         """
         """
         self.lhs=lhs
@@ -36,6 +37,7 @@ class Item(object):
         self.count=count
         self.dot=dot
         self.lookahead=lookahead
+        self.index=index
     
     def __str__(self):
         string=str(self.count)[:3]+" "+self.lhs+" ->"
@@ -85,10 +87,10 @@ class Item(object):
         Returns a duplicate of itself with the dot moved on placed to right
        
         """
-        return self.__class__(self.lhs,self.rhs,self.count,self.dot+1,self.lookahead)
+        return self.__class__(self.lhs,self.rhs,self.count,self.dot+1,self.lookahead,self.index)
 
     def dubWithLookahead(self,lookahead):
-        return self.__class__(self.lhs,self.rhs,self.count,self.dot,lookahead)
+        return self.__class__(self.lhs,self.rhs,self.count,self.dot,lookahead,self.index)
 
     def itemFinished(self):
         """

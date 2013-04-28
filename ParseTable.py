@@ -24,9 +24,15 @@ from First import First
 
 class ParseTable(object):
     """
+    action stores all actions
+    gotos stores all gotos
+    rules stores all grammar rules indexed on index number
     """
-    
-    
+
+
+    actions={}
+    gotos={}
+    rules={}
 
     def __init__(self):
         """
@@ -43,9 +49,9 @@ class ParseTable(object):
         """
     
     
+        ###########ITEMSETS#####################
     
-    
-        #create First and Follow sets
+        #create First set
         first=First(cfg,topSymbol)
         print first
         #creates itemsets
@@ -57,7 +63,7 @@ class ParseTable(object):
         for item in startingRules:
             item.lookahead="$"
 
-        itemSets=[ItemSet(startingRules,cfg,first)]
+        itemSets=[ItemSet(startingRules,cfg,first,topSymbol,-1,0)]
         
         usedGOTOs=[startingRules[:]]
         newGOTOs=itemSets[0].getGOTOs()
@@ -71,19 +77,38 @@ class ParseTable(object):
             if newGOTO==[]:
                 break
             #create New Item set
-            itemSets.append(ItemSet(newGOTO,cfg,first))
+            itemSets.append(ItemSet(newGOTO,cfg,first,"V",-1,0))
             #add used items to used items and remove them from new items
             usedGOTOs=usedGOTOs+newGOTO
-            #add the new GOTOs from the new itemset, if they will be checked later if they are already used
+            #add the new GOTOs from the new itemset, they will be checked later if they are already used
             newGOTOs=newGOTOs+itemSets[-1].getGOTOs()
             
 
         
         ##temporary printing
         self.printItemSets(itemSets)
+
         
+        ###############PARSETABLE###################
 
+        #store all rules from cfg
 
+        for rule in cfg.listAllRules():
+            self.rules[rule.index]=rule
+
+    
+        #setup parsetable data structure
+        for i in xrange(len(itemSets)):
+            self.actions[i]={}
+            self.gotos[i]={}
+            for t in cfg.getAllTerminals():
+                self.actions[i][t]=[]
+            for nt in cfg.getAllNonTerminals():
+                self.gotos[i][nt]=[]
+        
+        #fill parsetable
+        for i in xrange(len(itemSets)):
+            pass
     def getNextGOTO(self,newGOTOs,usedGOTOs):
         """
         Returns the highest available goto set from the stack

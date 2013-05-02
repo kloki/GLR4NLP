@@ -133,7 +133,7 @@ class ParseTable(object):
             for item in itemset.items:
                 if item.headTerminal():
                     self.actions[itemset.state][item.head()].append("s")
-                elif(item.lhs==topSymbol and item.lookahead=="$"):
+                elif(item.lhs==topSymbol and item.itemFinished() and item.lookahead=="$"):
                     self.actions[itemset.state]["$"].append("accept")
                 elif(item.itemFinished()):
                     self.actions[itemset.state][item.lookahead].append("r"+str(item.index))

@@ -15,6 +15,9 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 from Item import Item
+from NewGoto import NewGoto
+
+
 class ItemSet(object):
     """
     Collection of items for one state
@@ -69,7 +72,8 @@ class ItemSet(object):
 
     def getGOTOs(self):
         """
-        This function returns a list of list containing all items to start a new itemset.
+        This function returns a list of tuples,
+        The the tuple contains the starting symbol,list containing all items to start a new itemset.
         Their are grouped by terminal/nonterminal.
         Thus a new ItemSet needs to be generated per group
         """
@@ -80,8 +84,8 @@ class ItemSet(object):
                 newItemsdict=self.appendDict(newItemsdict,item.head(),new)
         
         newItems=[]
-        for i in newItemsdict.itervalues():
-            newItems.append(i)
+        for symbol,itemlist in newItemsdict.items():
+            newItems.append(NewGoto(self.state,symbol,itemlist))
         return newItems
 
     def appendDict(self,dictionary,key,element):

@@ -47,7 +47,7 @@ class ParseTable(object):
         Creates parse table from a given grammar. 
         At the moment it is quite messy
         """
-    
+
     
         ###########ITEMSETS#####################
     
@@ -63,23 +63,36 @@ class ParseTable(object):
         for item in startingRules:
             item.lookahead="$"
 
-        itemSets=[ItemSet(startingRules,cfg,first,topSymbol,-1,0)]
+        #initialize first ItemSet
+        itemSets=[ItemSet(startingRules,cfg,first,topSymbol,1,0)]
         
-        usedGOTOs=[startingRules[:]]
+        
+        #now expand untill done
+        usedItems=[startingRules[:]]
         newGOTOs=itemSets[0].getGOTOs()
+        statecounter=1
+
+
+        #temp save gotos
+        tempG=[(0,topSymbol,statecounter)]#
+        statecounter+=1
+
         while newGOTOs!=[]:
 
             # get the oldest unsused Itemset, if empty break
             #create new itemsset of items generated from previous itemsets
-            (newGOTO,newGOTOs)=self.getNextGOTO(newGOTOs,usedGOTOs)
+            (newGOTO,newGOTOs)=self.getNextGOTO(newGOTOs,usedItems)
 
             #Stop if done
-            if newGOTO==[]:
+            if newGOTO.items==[]:
                 break
             #create New Item set
-            itemSets.append(ItemSet(newGOTO,cfg,first,"V",-1,0))
+            itemSets.append(ItemSet(newGOTO.items,cfg,first,newGOTO.symbol,newGOTO.originState,statecounter))
+            #SaveGoto
+            tempG.append((newGOTO.originState,newGOTO.symbol,statecounter))
+            statecounter+=1
             #add used items to used items and remove them from new items
-            usedGOTOs=usedGOTOs+newGOTO
+            usedItems=usedItems+newGOTO.items
             #add the new GOTOs from the new itemset, they will be checked later if they are already used
             newGOTOs=newGOTOs+itemSets[-1].getGOTOs()
             
@@ -87,7 +100,6 @@ class ParseTable(object):
         
         ##temporary printing
         self.printItemSets(itemSets)
-
         
         ###############PARSETABLE###################
 
@@ -96,43 +108,53 @@ class ParseTable(object):
         for rule in cfg.listAllRules():
             self.rules[rule.index]=rule
 
-    
+        print tempG
         #setup parsetable data structure
+        terminals=cfg.getAllTerminals()
+        nonTerminals=cfg.getAllNonTerminals()
         for i in xrange(len(itemSets)):
             self.actions[i]={}
             self.gotos[i]={}
-            for t in cfg.getAllTerminals():
+            for t in terminals:
                 self.actions[i][t]=[]
-            for nt in cfg.getAllNonTerminals():
+            for nt in nonTerminals:
                 self.gotos[i][nt]=[]
         
         #fill parsetable
+        
+        #GOTO table
+        for i in tempG:
+            if i[1] in nonTerminals:
+                self.gotos[i[0]][i[1]].append(i[2])
+
         for i in xrange(len(itemSets)):
             pass
-    def getNextGOTO(self,newGOTOs,usedGOTOs):
+    def getNextGOTO(self,newGOTOs,usedItems):
         """
         Returns the highest available goto set from the stack
         """
         newGOTO=newGOTOs[0]
         newGOTOs=newGOTOs[1:]
         
-        newGOTO=self.removeUsedGOTOs(newGOTO,usedGOTOs)
-        if newGOTO==[]and newGOTOs!=[]:
-            (newGOTO,newGOTOs)=self.getNextGOTO(newGOTOs,usedGOTOs)
+        newGOTO=self.removeUsedItems(newGOTO,usedItems)
+        if newGOTO.items==[]and newGOTOs!=[]:
+            (newGOTO,newGOTOs)=self.getNextGOTO(newGOTOs,usedItems)
 
         return (newGOTO,newGOTOs)
         
 
-    def removeUsedGOTOs(self,new,used):
+    def removeUsedItems(self,new,used):
         """
         remove goto groups that have been used before
         """
         unused=[]
         
-        for GOTO  in new:
-            if GOTO not in used:
-                unused.append(GOTO)
-        return unused
+        for item  in new.items:
+            if item not in used:
+                unused.append(item)
+
+        new.items=unused
+        return new
         
 
 
@@ -142,3 +164,23 @@ class ParseTable(object):
             string=string+ "Itemset "+str(itemSets.index(i))+"\n"+str(i)
         print string
     
+
+    def __str__(self):
+
+        string=""
+
+        string+="ACTION TABLE\n"
+        for i in self.actions.iterkeys():
+            for j in self.actions[i].iterkeys():
+                if self.actions[i][j]!=[]:
+                    for k in self.actions[i][j]:
+                        string+="GOTO("+str(i)+","+j+")="+k+"\n"
+
+        string+="\nGOTO TABLE\n"
+        for i in self.gotos.iterkeys():
+            for j in self.gotos[i].iterkeys():
+                if self.gotos[i][j]!=[]:
+                    for k in self.gotos[i][j]:
+                        string+="GOTO("+str(i)+","+j+")="+str(k)+"\n"
+
+        return string

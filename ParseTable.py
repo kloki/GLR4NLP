@@ -64,7 +64,7 @@ class ParseTable(object):
             item.lookahead="$"
 
         #initialize first ItemSet
-        itemSets=[ItemSet(startingRules,cfg,first,topSymbol,1,0)]
+        itemSets=[ItemSet(startingRules,cfg,first,topSymbol,-1,0)]
         
         
         #now expand untill done
@@ -74,9 +74,7 @@ class ParseTable(object):
 
 
         #temp save gotos
-        tempG=[(0,topSymbol,statecounter)]#
-        statecounter+=1
-
+        tempG=[]
         while newGOTOs!=[]:
 
             # get the oldest unsused Itemset, if empty break
@@ -108,15 +106,17 @@ class ParseTable(object):
         for rule in cfg.listAllRules():
             self.rules[rule.index]=rule
 
-        print tempG
         #setup parsetable data structure
         terminals=cfg.getAllTerminals()
         nonTerminals=cfg.getAllNonTerminals()
-        for i in xrange(len(itemSets)):
+        for i in xrange(len(itemSets)+1):
             self.actions[i]={}
             self.gotos[i]={}
+
             for t in terminals:
                 self.actions[i][t]=[]
+            self.actions[i]["$"]=[]#add endsymbol
+
             for nt in nonTerminals:
                 self.gotos[i][nt]=[]
         
@@ -127,8 +127,20 @@ class ParseTable(object):
             if i[1] in nonTerminals:
                 self.gotos[i[0]][i[1]].append(i[2])
 
-        for i in xrange(len(itemSets)):
-            pass
+
+        #action table
+        for itemset in itemSets:
+            for item in itemset.items:
+                if item.headTerminal():
+                    self.actions[itemset.state][item.head()].append("s")
+                elif(item.lhs==topSymbol and item.lookahead=="$"):
+                    self.actions[itemset.state]["$"].append("accept")
+                elif(item.itemFinished()):
+                    self.actions[itemset.state][item.lookahead].append("r"+str(item.index))
+                
+
+
+
     def getNextGOTO(self,newGOTOs,usedItems):
         """
         Returns the highest available goto set from the stack
@@ -174,7 +186,7 @@ class ParseTable(object):
             for j in self.actions[i].iterkeys():
                 if self.actions[i][j]!=[]:
                     for k in self.actions[i][j]:
-                        string+="GOTO("+str(i)+","+j+")="+k+"\n"
+                        string+="ACTION("+str(i)+","+j+")="+k+"\n"
 
         string+="\nGOTO TABLE\n"
         for i in self.gotos.iterkeys():

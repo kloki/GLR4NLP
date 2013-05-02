@@ -73,6 +73,12 @@ class Item(object):
             return False
         else:
             return self.rhs[self.dot][0].isupper()
+
+    def headTerminal(self):
+        if self.dot==len(self.rhs):
+            return False
+        else:
+            return self.rhs[self.dot][0].islower()
     
     def getFollowSymbol(self):
         loc=self.dot+1

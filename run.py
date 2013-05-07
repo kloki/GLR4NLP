@@ -26,7 +26,11 @@ def main():
     cfg=CFG(sys.argv[1])
     pt=ParseTable()
     pt.generateParseTable(cfg,sys.argv[2])
+    pt.save("test")
+    pt2=ParseTable()
+    pt2.load("test")
     print pt
+    print pt2
 #-------------------------------
 if __name__ == "__main__":
     main()

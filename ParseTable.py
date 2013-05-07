@@ -17,6 +17,9 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
+
+import cPickle as pickle
+
 from ItemSet import ItemSet
 from Item import Item
 from First import First
@@ -210,3 +213,10 @@ class ParseTable(object):
                         string+="GOTO("+str(i)+","+j+")="+str(k)+"\n"
 
         return string
+
+    def save(self,filename):
+        pickle.dump( (self.actions,self.gotos,self.rules), open( filename+".pt", "wb" ) )
+
+
+    def load(self,filename):
+        (self.actions,self.gotos,self.rules) = pickle.load( open( filename+".pt", "rb" ) )

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # kloki
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,15 +15,21 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
-import sys
-from CFG import CFG
-from ParseTable import ParseTable
+class Lexicon(object):
+    transform={}
+    def __init__(self):
+        self.transform["i"]="n"
+        self.transform["saw"]="v"
+        self.transform["a"]="det"
+        self.transform["man"]="n"
+        self.transform["with"]="prep"
+        self.transform["telescope"]="n"
+        
+    def transformWords(self,words):
+        transformed=[]
+        for word in words:
+            transformed.append(self.transform[word])
+        return transformed
 
-def main():
-    cfg=CFG(sys.argv[1])
-    pt=ParseTable()
-    pt.generateParseTable(cfg,sys.argv[2])
-    print pt
-#-------------------------------
-if __name__ == "__main__":
-    main()
+    def __str__(self):
+        pass

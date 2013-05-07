@@ -20,12 +20,16 @@
 import sys
 from CFG import CFG
 from ParseTable import ParseTable
-
+from Parser import Parser
+from Lexicon import Lexicon
 def main():
-    cfg=CFG(sys.argv[1])
     pt=ParseTable()
-    pt.generateParseTable(cfg,sys.argv[2])
-    print pt
+    pt.load("tomita")
+    lex=Lexicon()
+    p=Parser(pt,lex)
+    p.parse("i saw a man")
+
+    
 #-------------------------------
 if __name__ == "__main__":
     main()

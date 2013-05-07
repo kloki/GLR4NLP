@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # kloki
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,15 +15,12 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
-import sys
-from CFG import CFG
-from ParseTable import ParseTable
+class ParsePath(object):
+    stack=[]
+    
+    def __init__(self,beginstate):
+        self.stack=beginstate
+        
 
-def main():
-    cfg=CFG(sys.argv[1])
-    pt=ParseTable()
-    pt.generateParseTable(cfg,sys.argv[2])
-    print pt
-#-------------------------------
-if __name__ == "__main__":
-    main()
+    def __str__(self):
+        return str(stack)

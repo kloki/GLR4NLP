@@ -41,8 +41,8 @@ class CFG(object):
         with open(textfile,"r") as f:
             rules=f.readlines()
             for rule in rules:
-                if not rule=="":#ignore empty lines
-                    rule=rule.split()
+                rule=rule.split()
+                if len(rule)!=0:
                     self.addRule(rule[1],rule[2:],int(rule[0]))
                     self.checkSymbols(rule[1:])
         self.normaliseCounts()

@@ -123,20 +123,34 @@ class ParseTable(object):
         #fill parsetable
         
         #GOTO table
+
+        shiftstates={}
+        for i in itemSets:
+            shiftstates[i.state]={}
+            for t in terminals:
+                shiftstates[i.state][t]=[]
+        
         for i in tempG:
             if i[1] in nonTerminals:
                 self.gotos[i[0]][i[1]].append(i[2])
-
-
+                
+            else:
+                if i[2] not in shiftstates[i[0]][i[1]]:
+                    shiftstates[i[0]][i[1]].append(i[2])
         #action table
         for itemset in itemSets:
             for item in itemset.items:
                 if item.headTerminal():
-                    self.actions[itemset.state][item.head()].append("s")
+                    #retrieve shift states:
+                    for shift in shiftstates[itemset.state][item.head()]:
+                        if ("s"+str(shift)) not in self.actions[itemset.state][item.head()]:
+                            self.actions[itemset.state][item.head()].append(("s"+str(shift)))
                 elif(item.lhs==topSymbol and item.itemFinished() and item.lookahead=="$"):
-                    self.actions[itemset.state]["$"].append("accept")
+                    if "accept" not in self.actions[itemset.state]["$"]:
+                        self.actions[itemset.state]["$"].append("accept")
                 elif(item.itemFinished()):
-                    self.actions[itemset.state][item.lookahead].append("r"+str(item.index))
+                    if ("r"+str(item.index)) not in self.actions[itemset.state][item.lookahead]:
+                        self.actions[itemset.state][item.lookahead].append("r"+str(item.index))
                 
 
 

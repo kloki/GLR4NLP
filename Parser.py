@@ -16,36 +16,57 @@
 # Koen Klinkers k.klinkers@gmail.com
 from ParsePath import ParsePath
 class Parser(object):
-    paths=[]
+    
     words=[]
     categories=[]
     lookaheads=[]
+    
+    activePaths=[]
+    shiftPaths=[]
+    finishedPaths=[]
     def __init__(self,pt,lex):
         self.parseTable=pt
         self.lexicon=lex
 
     def parse(self, sentence):
-
-
         self.words=sentence.split()
         self.categories=self.lexicon.transformWords(self.words)
         self.lookaheads=self.categories[:]
         #start parsing
-        self.paths.append(ParsePath("S0"))
+        self.activePaths.append(ParsePath([0],"none"))
 
-        while True:
-            self.retrieveStates()
-            self.
+        while self.activePaths!=[]:
+            self.parseTillShift()
+            self.shift()
+            
+
+        print self.finishedPaths
+
+
+
+    def parseTillShift(self):
+        while self.activePaths!=[]:
+            path=self.activePaths.pop()
+            pathActions=self.parseTable.getActions(path.getState(),self.lookaheads[0])
+            if pathActions!=[]:#table empty, doesnt belong to grammar stop parsing    
+                for action in pathActions:
+                    if action=="accept":
+                        self.finishedPaths.append(path)
+                    elif action[0]=="s":#move to shift list
+                        self.shiftPaths.append(path.addAction(action))
+                    elif action[0]=="r":#reduce stack and apply goto
+                        newpath=path.addAction(action)
+                        goto=newpath.reduce(self.parseTable.getRule(action))
+                        newpath.goto(self.parseTable.getGOTO(goto[0],goto[1]))
+                        self.ActivePaths.append(newAction)
         
 
-
-
-
     def shift(self):
-        pass
+        self.lookaheads.pop()
+        for path in self.shiftPaths:
+            self.activePaths.append(path.shift(self.lookaheads[0]))
 
-    def reduce(self):
-        pass
 
     def __str__(self):
         pass
+    

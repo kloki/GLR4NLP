@@ -220,3 +220,13 @@ class ParseTable(object):
 
     def load(self,filename):
         (self.actions,self.gotos,self.rules) = pickle.load( open( filename+".pt", "rb" ) )
+
+
+    def getActions(self,state,lookahead):
+        return self.actions[state][lookahead]
+
+    def getGOTO(self,state,nonterminal):
+        return self.gotos[state][nonTerminal][0]#for now i am assumming there can be only one goto state
+
+    def getRule(self,index):
+        return self.rules[int(index[1])]

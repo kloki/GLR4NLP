@@ -17,10 +17,37 @@
 
 class ParsePath(object):
     stack=[]
-    
-    def __init__(self,beginstate):
+    nextAction=""
+    def __init__(self,beginstate,nextAction):
         self.stack=beginstate
-        
+        self.nextAction=nextAction
 
     def __str__(self):
         return str(stack)
+
+
+    def getState(self):
+        return self.stack[-1]
+
+    def getTopStack(self):
+        return self.stack[-1]
+    
+    def addAction(self,action):
+        """
+        It returns a clone because a path can split multiple times
+        """
+        return self.__class__(self.stack,action)
+
+    def reduce(self,rule):
+        self.stack=self.stack[:-(len(rule.rhs)*2)]
+        self.stack.append(rule.lhs)
+        return (self.stack[-2],self.stack[-1])
+
+
+    def shift(self,terminal):
+        self.stack.append(terminal)
+        self.stack.append(int(self.nextAction[1]))
+
+    def goto(self,state):
+        self.stack.append(state)
+    

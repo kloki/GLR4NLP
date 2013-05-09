@@ -39,17 +39,19 @@ class Parser(object):
         while self.activePaths!=[]: 
             self.reduceUntillShift()
             self.shift()
+
+        print len(self.finishedPaths)
             
 
     def reduceUntillShift(self):
         while self.activePaths!=[]:
             path=self.activePaths.pop()
             pathActions=self.parseTable.getActions(path.getState(),self.lookaheads[0])
+            
             if pathActions!=[]:#table empty, doesnt belong to grammar stop parsing    
                 for action in pathActions:
-                    if action=="acc":
+                    if action=="acc":#sentence accepted
                         self.finishedPaths.append(path)
-                        print "hoeze" 
                     elif action[0]=="s":#move to shift list
                         self.shiftPaths.append(path.addAction(action))
                     elif action[0]=="r":#reduce stack and apply goto

@@ -27,7 +27,7 @@ def main():
     pt.load("tomita")
     lex=Lexicon()
     p=Parser(pt,lex)
-    p.parse("i saw a man")
+    p.parse(sys.argv[1])
 
     
 #-------------------------------

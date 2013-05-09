@@ -27,7 +27,7 @@ class CFG(object):
     cfg={}
     terminals=[]
     nonTerminals=[]
-    ruleIndex=0
+    ruleIndex=1
     def __init__(self,textfile ):
         """
         Grammar rules are read from text file.

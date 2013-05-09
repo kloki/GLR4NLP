@@ -35,38 +35,52 @@ class Parser(object):
         #start parsing
         self.activePaths.append(ParsePath([0],"none"))
 
-        while self.activePaths!=[]:
-            self.parseTillShift()
+        while self.activePaths!=[]: 
+            self.reduceUntillShift()
             self.shift()
+
+            #self.printpaths()
             
 
-        print self.finishedPaths
-
-
-
-    def parseTillShift(self):
+    def reduceUntillShift(self):
         while self.activePaths!=[]:
             path=self.activePaths.pop()
+            print path
+            print path.getState()
+            print self.lookaheads[0]
             pathActions=self.parseTable.getActions(path.getState(),self.lookaheads[0])
+            print pathActions
             if pathActions!=[]:#table empty, doesnt belong to grammar stop parsing    
                 for action in pathActions:
                     if action=="accept":
                         self.finishedPaths.append(path)
+                        print "hoeze" 
                     elif action[0]=="s":#move to shift list
                         self.shiftPaths.append(path.addAction(action))
                     elif action[0]=="r":#reduce stack and apply goto
                         newpath=path.addAction(action)
                         goto=newpath.reduce(self.parseTable.getRule(action))
                         newpath.goto(self.parseTable.getGOTO(goto[0],goto[1]))
-                        self.ActivePaths.append(newAction)
+                        self.ActivePaths.append(newpath)
         
 
     def shift(self):
-        self.lookaheads.pop()
+        terminal=self.lookaheads.pop(0)
         for path in self.shiftPaths:
-            self.activePaths.append(path.shift(self.lookaheads[0]))
-
+            self.activePaths.append(path.shift(terminal))
+        self.shiftPaths=[]
 
     def __str__(self):
         pass
     
+
+
+    def printpaths(self):
+        print "Active"
+        for i in self.activePaths:
+            print i
+
+        print "finished"
+
+        for i in self.finishedPaths:
+            print i

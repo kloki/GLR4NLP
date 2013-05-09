@@ -15,12 +15,20 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
+from Tree import Tree
+
 class ParsePath(object):
     stack=[]
     nextAction=""
-    def __init__(self,beginstate,nextAction):
+
+    def __init__(self,beginstate,nextAction,tree):
         self.stack=beginstate
         self.nextAction=nextAction
+        if tree==0:
+            self.tree=Tree()
+        else:
+            self.tree=Tree()
+
 
     def __str__(self):
         return str(self.stack)
@@ -36,11 +44,15 @@ class ParsePath(object):
         """
         It returns a clone because a path can split multiple times
         """
-        return self.__class__(self.stack,action)
+        return self.__class__(self.stack,action,self.tree)
 
     def reduce(self,rule):
         self.stack=self.stack[:-(len(rule.rhs)*2)]
         self.stack.append(rule.lhs)
+
+        # update tree
+        self.tree.mergeTreelets(rule.lhs,len(rule.rhs))
+
         return (self.stack[-2],self.stack[-1])
 
 
@@ -48,7 +60,10 @@ class ParsePath(object):
         newstack=self.stack[:]
         newstack.append(terminal)
         newstack.append(int(self.nextAction[1:]))
-        return self.__class__(newstack,"")
+        
+        #update tree:
+        self.tree.addTreelet(terminal)
+        return self.__class__(newstack,"",self.tree)
 
     def goto(self,state):
         self.stack.append(state)

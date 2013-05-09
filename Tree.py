@@ -14,16 +14,31 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 # Koen Klinkers k.klinkers@gmail.com
-
 class Tree(object):
-
+    treelets=[]
     def __init__(self):
         pass
-    
 
     def __str__(self):
-        pass
+        string=""
+        for i in self.treelets:
+            string+=i+"\n"
 
+        return string
+
+
+    def addTreelet(self,treelet):
+        self.treelets.append(treelet)
+
+
+    def mergeTreelets(self,parent,nChildren):
+        children=self.treelets[-nChildren:]
+        self.treelets=self.treelets[:-nChildren]
+        newTreelet="("+parent+" "
+        for child in children:
+            newTreelet+=child+" "
+        newTreelet+=")"
+        self.treelets.append(newTreelet)
 
     # this way == and != work with this object
     def __eq__(self, other):

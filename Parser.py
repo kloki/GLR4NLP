@@ -34,13 +34,14 @@ class Parser(object):
         self.lookaheads=self.categories[:]
         self.lookaheads.append("$") #add end symbol
         #start parsing
-        self.activePaths.append(ParsePath([0],"none"))
+        self.activePaths.append(ParsePath([0],"none",0))
 
         while self.activePaths!=[]: 
             self.reduceUntillShift()
             self.shift()
 
-        print len(self.finishedPaths)
+        for i in self.finishedPaths:
+            print i.tree
             
 
     def reduceUntillShift(self):

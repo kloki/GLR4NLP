@@ -1,0 +1,4 @@
+-build trees
+-implement propabilities
+-implement syncing
+-need handle empty goto entries

@@ -39,19 +39,15 @@ class ParsePath(object):
         return self.__class__(self.stack,action)
 
     def reduce(self,rule):
-        print rule.rhs
         self.stack=self.stack[:-(len(rule.rhs)*2)]
-        print "ddd"
-        print self.stack
         self.stack.append(rule.lhs)
-        print self.stack
         return (self.stack[-2],self.stack[-1])
 
 
     def shift(self,terminal):
         newstack=self.stack[:]
         newstack.append(terminal)
-        newstack.append(int(self.nextAction[1]))
+        newstack.append(int(self.nextAction[1:]))
         return self.__class__(newstack,"")
 
     def goto(self,state):

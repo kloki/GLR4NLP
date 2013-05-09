@@ -225,8 +225,8 @@ class ParseTable(object):
     def getActions(self,state,lookahead):
         return self.actions[state][lookahead]
 
-    def getGOTO(self,state,nonterminal):
+    def getGOTO(self,state,nonTerminal):
         return self.gotos[state][nonTerminal][0]#for now i am assumming there can be only one goto state
 
     def getRule(self,index):
-        return self.rules[int(index[1])]
+        return self.rules[int(index[1:])]

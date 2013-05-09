@@ -66,7 +66,7 @@ assI4
 (dp34
 S'v'
 (lp35
-S'r3'
+S'r2'
 p36
 asg4
 (lp37
@@ -86,7 +86,7 @@ sg4
 (lp43
 sg7
 (lp44
-S'r2'
+S'r1'
 p45
 asS'$'
 (lp46
@@ -129,7 +129,7 @@ sg4
 (lp62
 sg7
 (lp63
-S'r1'
+S'r0'
 p64
 asS'$'
 (lp65
@@ -140,7 +140,7 @@ ssI9
 (dp67
 S'v'
 (lp68
-S'r5'
+S'r4'
 p69
 asg4
 (lp70
@@ -156,7 +156,7 @@ ssI10
 (dp74
 S'v'
 (lp75
-S'r4'
+S'r3'
 p76
 asg4
 (lp77
@@ -172,7 +172,7 @@ ssI11
 (dp81
 S'v'
 (lp82
-S'r6'
+S'r5'
 p83
 asg4
 (lp84
@@ -193,7 +193,7 @@ sg4
 (lp90
 sg7
 (lp91
-S'r7'
+S'r6'
 p92
 ag16
 asS'$'

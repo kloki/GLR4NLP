@@ -32,27 +32,22 @@ class Parser(object):
         self.words=sentence.split()
         self.categories=self.lexicon.transformWords(self.words)
         self.lookaheads=self.categories[:]
+        self.lookaheads.append("$") #add end symbol
         #start parsing
         self.activePaths.append(ParsePath([0],"none"))
 
         while self.activePaths!=[]: 
             self.reduceUntillShift()
             self.shift()
-
-            #self.printpaths()
             
 
     def reduceUntillShift(self):
         while self.activePaths!=[]:
             path=self.activePaths.pop()
-            print path
-            print path.getState()
-            print self.lookaheads[0]
             pathActions=self.parseTable.getActions(path.getState(),self.lookaheads[0])
-            print pathActions
             if pathActions!=[]:#table empty, doesnt belong to grammar stop parsing    
                 for action in pathActions:
-                    if action=="accept":
+                    if action=="acc":
                         self.finishedPaths.append(path)
                         print "hoeze" 
                     elif action[0]=="s":#move to shift list
@@ -61,7 +56,7 @@ class Parser(object):
                         newpath=path.addAction(action)
                         goto=newpath.reduce(self.parseTable.getRule(action))
                         newpath.goto(self.parseTable.getGOTO(goto[0],goto[1]))
-                        self.ActivePaths.append(newpath)
+                        self.activePaths.append(newpath)
         
 
     def shift(self):

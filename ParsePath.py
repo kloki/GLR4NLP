@@ -27,7 +27,7 @@ class ParsePath(object):
         if tree==0:
             self.tree=Tree()
         else:
-            self.tree=Tree()
+            self.tree=tree
 
 
     def __str__(self):
@@ -63,9 +63,12 @@ class ParsePath(object):
         
         #update tree:
         self.tree.addTreelet(terminal)
+
         return self.__class__(newstack,"",self.tree)
 
     def goto(self,state):
         self.stack.append(state)
 
     
+    def getTree(self):
+        return self.tree.getTreeString()

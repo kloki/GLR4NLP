@@ -39,10 +39,9 @@ class Parser(object):
         while self.activePaths!=[]: 
             self.reduceUntillShift()
             self.shift()
-
-        for i in self.finishedPaths:
-            print i.tree
-            
+            #self.printpaths()
+        
+        self.printTrees()
 
     def reduceUntillShift(self):
         while self.activePaths!=[]:
@@ -60,7 +59,7 @@ class Parser(object):
                         goto=newpath.reduce(self.parseTable.getRule(action))
                         newpath.goto(self.parseTable.getGOTO(goto[0],goto[1]))
                         self.activePaths.append(newpath)
-        
+                        
 
     def shift(self):
         terminal=self.lookaheads.pop(0)
@@ -82,3 +81,14 @@ class Parser(object):
 
         for i in self.finishedPaths:
             print i
+
+    def printTrees(self):
+        for path in self.finishedPaths:
+            #print self.lexicalize(path.getTree())
+            print path.getTree()
+
+    def lexicalize(self,tree):
+        for word in self.words:
+            tree=tree.replace(self.lexicon.getCategorie(word),"("+self.lexicon.getCategorie(word)+" "+word+" )",1)
+        return tree
+

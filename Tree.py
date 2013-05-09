@@ -18,7 +18,6 @@ class Tree(object):
     treelets=[]
     def __init__(self):
         pass
-
     def __str__(self):
         string=""
         for i in self.treelets:
@@ -40,6 +39,10 @@ class Tree(object):
         newTreelet+=")"
         self.treelets.append(newTreelet)
 
+    def getTreeString(self):
+        return self.treelets[0]
+
+
     # this way == and != work with this object
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -49,3 +52,6 @@ class Tree(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+
+    

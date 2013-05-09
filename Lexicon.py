@@ -31,5 +31,8 @@ class Lexicon(object):
             transformed.append(self.transform[word])
         return transformed
 
+    def getCategorie(self,word):
+        return self.transform[word]
+
     def __str__(self):
         pass

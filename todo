@@ -5,3 +5,4 @@ TableGeneration
 Parser
 -implement syncing
 -need handle empty goto entries
+-implement max paths

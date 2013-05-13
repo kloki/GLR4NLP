@@ -24,6 +24,8 @@ class Parser(object):
     activePaths=[]
     shiftPaths=[]
     finishedPaths=[]
+    maxNumberOfPaths=20
+
     def __init__(self,pt,lex):
         self.parseTable=pt
         self.lexicon=lex
@@ -40,7 +42,7 @@ class Parser(object):
             self.reduceUntillShift()
             self.shift()
             #self.printpaths()
-        
+            self.prunePaths()
         self.printTrees()
 
     def reduceUntillShift(self):
@@ -70,6 +72,9 @@ class Parser(object):
     def __str__(self):
         pass
     
+    def prunePaths(self):
+        rank=sorted(self.activePaths, key=lambda path: path.loglikelihood)
+        self.activePaths=rank[:self.maxNumberOfPaths]
 
 
     def printpaths(self):
@@ -82,6 +87,8 @@ class Parser(object):
         for i in self.finishedPaths:
             print i
 
+
+
     def printTrees(self):
         for path in self.finishedPaths:
             print str(path.loglikelihood)[:6]+" "+self.lexicalize(path.getTree())
@@ -91,4 +98,5 @@ class Parser(object):
             tree=tree.replace(" "+self.lexicon.getCategorie(word)," ("+self.lexicon.getCategorie(word).upper()+" "+word+" )",1)
             tree=tree.replace(" )",")")
         return tree
+
 

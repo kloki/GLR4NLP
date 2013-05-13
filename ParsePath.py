@@ -20,14 +20,17 @@ import copy
 class ParsePath(object):
     stack=[]
     nextAction=""
+    loglikelihood=1
 
-    def __init__(self,beginstate,nextAction,tree):
+    def __init__(self,beginstate,nextAction,tree,prob):
         self.stack=beginstate
         self.nextAction=nextAction
         if tree==0:
             self.tree=Tree()
         else:
             self.tree=tree
+
+        self.loglikelihood=prob
 
 
     def __str__(self):
@@ -44,7 +47,7 @@ class ParsePath(object):
         """
         It returns a clone because a path can split multiple times
         """
-        return self.__class__(self.stack,action,copy.deepcopy(self.tree))
+        return self.__class__(self.stack,action,copy.deepcopy(self.tree),self.loglikelihood)
 
     def reduce(self,rule):
         self.stack=self.stack[:-(len(rule.rhs)*2)]
@@ -52,6 +55,9 @@ class ParsePath(object):
 
         # update tree
         self.tree.mergeTreelets(rule.lhs,len(rule.rhs))
+        
+        # update loglikelihood
+        self.loglikelihood+=rule.loglikelihood
 
         return (self.stack[-2],self.stack[-1])
 
@@ -64,7 +70,7 @@ class ParsePath(object):
         #update tree:
         self.tree.addTreelet(terminal)
 
-        return self.__class__(newstack,"",copy.deepcopy(self.tree))
+        return self.__class__(newstack,"",copy.deepcopy(self.tree),self.loglikelihood)
 
     def goto(self,state):
         self.stack.append(state)

@@ -34,7 +34,7 @@ class Parser(object):
         self.lookaheads=self.categories[:]
         self.lookaheads.append("$") #add end symbol
         #start parsing
-        self.activePaths.append(ParsePath([0],"none",0))
+        self.activePaths.append(ParsePath([0],"none",0,0))#no tree and log likelihood 0
 
         while self.activePaths!=[]: 
             self.reduceUntillShift()
@@ -85,7 +85,7 @@ class Parser(object):
     def printTrees(self):
         for path in self.finishedPaths:
             #print self.lexicalize(path.getTree())
-            print path.getTree()
+            print str(path.loglikelihood)[:6]+" "+ path.getTree()
 
     def lexicalize(self,tree):
         for word in self.words:

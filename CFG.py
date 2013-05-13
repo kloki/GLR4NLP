@@ -16,7 +16,9 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 # Koen Klinkers k.klinkers@gmail.com
+
 from __future__ import division
+import math
 from Rule import Rule
 from Item import Item
 
@@ -84,9 +86,10 @@ class CFG(object):
         for key,rules in self.cfg.iteritems():
             total=0
             for rule in rules:
-                total+=rule.count
+                total+=rule.probability
             for rule in rules:
-                rule.count=rule.count/total
+                rule.probability=rule.probability/total
+                rule.loglikelihood=math.log(rule.probability)
 
     def __str__(self):
 
@@ -110,7 +113,7 @@ class CFG(object):
         """
         itemRules=[]
         for rule in self.cfg[symbol]:
-            itemRules.append(Item(rule.lhs,rule.rhs,rule.count,0,"none",rule.index))
+            itemRules.append(Item(rule.lhs,rule.rhs,rule.probability,0,"none",rule.index))
         return itemRules
 
 

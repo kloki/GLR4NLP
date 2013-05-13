@@ -24,18 +24,20 @@ class Rule(object):
     """
     lhs=""
     rhs=[]
-    count=0
+    probability=0
     index=0
-    def __init__(self,lhs,rhs,count,index ):
+    loglikelihood=0
+
+    def __init__(self,lhs,rhs,probability,index ):
         """
         """
         self.lhs=lhs
         self.rhs=rhs
-        self.count=count
+        self.probability=probability
         self.index=index
 
     def __str__(self):
-        string=str(self.index)+": "+str(self.count)[:3]+" "+self.lhs+" ->" 
+        string=str(self.index)+": "+str(self.probability)[:3]+" "+self.lhs+" ->" 
         for r in self.rhs:
             string=string+" "+r
         string=string+"\n"

@@ -31,6 +31,7 @@ def main():
 
     for rule in cfg.listAllRules():
             rules[rule.index]=rule
+            print rule.probability
 
     terminals=cfg.getAllTerminals()
     nonTerminals=cfg.getAllNonTerminals()

@@ -84,11 +84,11 @@ class Parser(object):
 
     def printTrees(self):
         for path in self.finishedPaths:
-            #print self.lexicalize(path.getTree())
-            print str(path.loglikelihood)[:6]+" "+ path.getTree()
+            print str(path.loglikelihood)[:6]+" "+self.lexicalize(path.getTree())
 
     def lexicalize(self,tree):
         for word in self.words:
-            tree=tree.replace(self.lexicon.getCategorie(word),"("+self.lexicon.getCategorie(word)+" "+word+" )",1)
+            tree=tree.replace(" "+self.lexicon.getCategorie(word)," ("+self.lexicon.getCategorie(word).upper()+" "+word+" )",1)
+            tree=tree.replace(" )",")")
         return tree
 

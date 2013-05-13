@@ -1,3 +1,7 @@
--proper lexicalization
+TableGeneration
+-bugged
+
+
+Parser
 -implement syncing
 -need handle empty goto entries

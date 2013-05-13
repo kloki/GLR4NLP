@@ -16,7 +16,7 @@
 # Koen Klinkers k.klinkers@gmail.com
 
 from Tree import Tree
-
+import copy
 class ParsePath(object):
     stack=[]
     nextAction=""
@@ -44,7 +44,7 @@ class ParsePath(object):
         """
         It returns a clone because a path can split multiple times
         """
-        return self.__class__(self.stack,action,self.tree)
+        return self.__class__(self.stack,action,copy.deepcopy(self.tree))
 
     def reduce(self,rule):
         self.stack=self.stack[:-(len(rule.rhs)*2)]
@@ -64,7 +64,7 @@ class ParsePath(object):
         #update tree:
         self.tree.addTreelet(terminal)
 
-        return self.__class__(newstack,"",self.tree)
+        return self.__class__(newstack,"",copy.deepcopy(self.tree))
 
     def goto(self,state):
         self.stack.append(state)

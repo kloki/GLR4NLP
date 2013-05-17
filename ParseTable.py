@@ -124,7 +124,6 @@ class ParseTable(object):
                 self.gotos[i][nt]=[]
         
         #fill parsetable
-        print tempG
         #GOTO table
                 
         shiftstates={}

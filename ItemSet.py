@@ -53,16 +53,13 @@ class ItemSet(object):
                     for new in newitems:
                         if (not new in closure) and (not new in partialitems):
                             follow=current.getFollowSymbol()
-                            if follow=="$":#if end if item at lookahead form parrent item
+                            if follow=="$":#if at the end of rule is lookahead of parent
                                 new.lookahead=current.lookahead
                                 partialitems.append(new)
                             elif follow[0].isupper():#if non terminal, get all terminals from first set
                                 for terminal in first.getTerminals(follow):
                                     dup=new.dubWithLookahead(terminal)
                                     partialitems.append(dup)
-                            else:#if terminal, terminal is look ahead
-                                new.lookahead=follow
-                                partialitems.append(new)
                             
                             
            #remove the just extracted rule

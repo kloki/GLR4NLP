@@ -43,6 +43,7 @@ class Parser(object):
             self.shift()
             #self.printpaths()
             self.prunePaths()
+        
         self.printTrees()
 
     def reduceUntillShift(self):
@@ -90,8 +91,11 @@ class Parser(object):
 
 
     def printTrees(self):
-        for path in self.finishedPaths:
-            print str(path.loglikelihood)[:6]+" "+self.lexicalize(path.getTree())
+        if self.finishedPaths==[]:
+            print "No parse"
+        else:
+            for path in self.finishedPaths:
+                print str(path.loglikelihood)[:6]+" "+self.lexicalize(path.getTree())
 
     def lexicalize(self,tree):
         for word in self.words:

@@ -56,7 +56,7 @@ class ItemSet(object):
                             if follow=="$":#if at the end of rule is lookahead of parent
                                 new.lookahead=current.lookahead
                                 partialitems.append(new)
-                            elif follow[0].isupper():#if non terminal, get all terminals from first set
+                            else:
                                 for terminal in first.getTerminals(follow):
                                     dup=new.dubWithLookahead(terminal)
                                     partialitems.append(dup)

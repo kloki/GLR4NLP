@@ -19,7 +19,7 @@
 
 
 import cPickle as pickle
-
+import os
 from ItemSet import ItemSet
 from Item import Item
 from First import First
@@ -220,6 +220,59 @@ class ParseTable(object):
     def load(self,filename):
         (self.actions,self.gotos,self.rules) = pickle.load( open( filename+".pt", "rb" ) )
 
+
+    def texfile(self,PDF):
+        """
+        This creates a tex file with the parse table.
+        If PDF is true the tex file is converted to a PDF. Only works on unix 
+        """
+        tex=open("parsetable.tex","w")
+        tex.write("\\documentclass[11pt]{article}\n")
+        tex.write("\\title{ParseTable}\n")
+        tex.write("\\begin{document}\n")
+        tex.write("\\maketitle\n")
+        numberOfTerminals=len(self.actions[0])
+        numberOfNonTerminals=len(self.gotos[0])
+        numberOfStats=len(self.actions)
+        
+        tex.write("\\begin{tabular}{|l|"+"c"*numberOfTerminals+"|"+"l"*numberOfNonTerminals+"|}\n")
+        tex.write("\\hline\n")
+        tex.write("&\\multicolumn{"+str(numberOfTerminals)+"}{l|}{Actions} &\\multicolumn{"+str(numberOfNonTerminals)+"}{l|}{Goto}\\\\")
+        tex.write("\\hline\n")
+        tex.write("State")
+        for key in self.actions[0].keys():
+            if key =="$":
+                tex.write("&\\"+key)
+            else:
+                tex.write("&"+key)
+        for key in self.gotos[0].keys():
+            tex.write("&"+key)
+        tex.write("\\\\\n")        
+        tex.write("\\hline\n")
+        
+        for state in self.actions.keys():
+            tex.write(str(state))
+            for symbol in self.actions[state].keys():
+                tex.write("&")
+                for action in self.actions[state][symbol]:
+                    tex.write(action+" ")
+            for symbol in self.gotos[state].keys():
+                tex.write("&")
+                for goto in self.gotos[state][symbol]:
+                    tex.write(str(goto)+" ")
+            tex.write("\\\\\n")
+
+
+
+
+        tex.write("\\hline\n")
+        tex.write("\\end{tabular}\n")
+        tex.write("\\end{document}\n")
+        tex.close()
+
+        if PDF:
+            os.system("pdflatex parsetable.tex >/dev/null")
+            os.system("rm parsetable.aux parsetable.log")
 
     def getActions(self,state,lookahead):
         return self.actions[state][lookahead]

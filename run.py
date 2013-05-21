@@ -25,6 +25,7 @@ def main():
     cfg=CFG(sys.argv[1])
     pt=ParseTable()
     pt.generateParseTable(cfg,sys.argv[2])
+    pt.texfile(True)
     print pt
 #-------------------------------
 if __name__ == "__main__":

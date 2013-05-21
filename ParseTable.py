@@ -67,41 +67,47 @@ class ParseTable(object):
             item.lookahead="$"
 
         #initialize first ItemSet
-        itemSets=[ItemSet(startingRules,cfg,first,topSymbol,-1,0)]
+        itemSets=[ItemSet(startingRules,cfg,first,topSymbol,0)]
         
         
         #now expand untill done
-        usedItems=[startingRules[:]]
         newGOTOs=itemSets[0].getGOTOs()
         statecounter=1
-
-
-        #temp save gotos
-        tempG=[]
+        itemSetRelations=[]
+        
         while newGOTOs!=[]:
+            newGOTO=newGOTOs.pop(0)
 
-            # get the oldest unsused Itemset, if empty break
-            #create new itemsset of items generated from previous itemsets
-            (newGOTO,newGOTOs)=self.getNextGOTO(newGOTOs,usedItems)
+            
+            #check if goto is already used
+            used=False
+            for itemset in itemSets:
+                for item in newGOTO.items:
+                    if item in itemset.originItems:
+                        used=True
+                        #add relation
+                        itemSetRelations.append((newGOTO.originState,newGOTO.symbol,itemset.state))
+                        break
+                if used:#double break
+                    break
 
-            #Stop if done
-            if newGOTO.items==[]:
-                break
+            if used ==False:
+                
             #create New Item set
-            itemSets.append(ItemSet(newGOTO.items,cfg,first,newGOTO.symbol,newGOTO.originState,statecounter))
-            #SaveGoto
-            tempG.append((newGOTO.originState,newGOTO.symbol,statecounter))
-            statecounter+=1
-            #add used items to used items and remove them from new items
-            usedItems=usedItems+newGOTO.items
-            #add the new GOTOs from the new itemset, they will be checked later if they are already used
-            newGOTOs=newGOTOs+itemSets[-1].getGOTOs()
+                itemSets.append(ItemSet(newGOTO.items,cfg,first,newGOTO.symbol,statecounter))
+                
+            
+                #save itemset relations
+                itemSetRelations.append((newGOTO.originState,newGOTO.symbol,statecounter))
+                statecounter+=1
+                #get the new GOTOs from the newest itemset, they will be checked later if they are already used
+                newGOTOs=newGOTOs+itemSets[-1].getGOTOs()
             
 
         
         ##temporary printing
         self.printItemSets(itemSets)
-        
+        print itemSetRelations
         ###############PARSETABLE###################
 
         #store all rules from cfg
@@ -112,7 +118,7 @@ class ParseTable(object):
         #setup parsetable data structure
         terminals=cfg.getAllTerminals()
         nonTerminals=cfg.getAllNonTerminals()
-        for i in xrange(len(itemSets)+1):
+        for i in xrange(len(itemSets)):
             self.actions[i]={}
             self.gotos[i]={}
 
@@ -132,7 +138,7 @@ class ParseTable(object):
             for t in terminals:
                 shiftstates[i.state][t]=[]
         
-        for i in tempG:
+        for i in itemSetRelations:
             if i[1] in nonTerminals:
                 self.gotos[i[0]][i[1]].append(i[2])
                 
@@ -153,39 +159,9 @@ class ParseTable(object):
                 elif(item.itemFinished()):
                     if ("r"+str(item.index)) not in self.actions[itemset.state][item.lookahead]:
                         self.actions[itemset.state][item.lookahead].append("r"+str(item.index))
-                
-
-
-
-    def getNextGOTO(self,newGOTOs,usedItems):
-        """
-        Returns the highest available goto set from the stack
-        """
-        newGOTO=newGOTOs[0]
-        newGOTOs=newGOTOs[1:]
-        
-        newGOTO=self.removeUsedItems(newGOTO,usedItems)
-        if newGOTO.items==[]and newGOTOs!=[]:
-            (newGOTO,newGOTOs)=self.getNextGOTO(newGOTOs,usedItems)
-
-        return (newGOTO,newGOTOs)
         
 
-    def removeUsedItems(self,new,used):
-        """
-        remove goto groups that have been used before
-        """
-        unused=[]
-        
-        for item  in new.items:
-            if item not in used:
-                unused.append(item)
-
-        new.items=unused
-        return new
-        
-
-
+                        
     def printItemSets(self,itemSets):
         string=""
         for i in itemSets:

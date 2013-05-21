@@ -27,6 +27,8 @@ def main():
     pt.generateParseTable(cfg,sys.argv[2])
     pt.texfile(True)
     print pt
+    
+    pt.save("test")
 #-------------------------------
 if __name__ == "__main__":
     main()

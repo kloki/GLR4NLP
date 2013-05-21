@@ -20,6 +20,10 @@ class NewGoto(object):
     symbol=""
     items=[]
     def __init__(self,state,symbol,items):
+        """
+        items are of the Itemsclass
+        """
+
         self.originState=state
         self.symbol=symbol
         self.items=items

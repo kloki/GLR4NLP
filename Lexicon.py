@@ -16,15 +16,22 @@
 # Koen Klinkers k.klinkers@gmail.com
 
 class Lexicon(object):
+    """
+    for now it is still a dummy lexicon function
+    """
     transform={}
-    def __init__(self):
-        self.transform["i"]="n"
-        self.transform["saw"]="v"
-        self.transform["a"]="det"
-        self.transform["man"]="n"
-        self.transform["with"]="prep"
-        self.transform["telescope"]="n"
-        
+    def __init__(self,grammar):
+        if grammar=="tomita":
+            self.transform["i"]="n"
+            self.transform["saw"]="v"
+            self.transform["a"]="det"
+            self.transform["man"]="n"
+            self.transform["with"]="prep"
+            self.transform["telescope"]="n"
+        elif grammar=="dragon":
+            self.transform["c"]="c"
+            self.transform["d"]="d"
+
     def transformWords(self,words):
         transformed=[]
         for word in words:

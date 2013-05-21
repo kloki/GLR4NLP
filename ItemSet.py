@@ -23,16 +23,14 @@ class ItemSet(object):
     Collection of items for one state
     """
     items=[]
-    originState=0
+    originItems=[]
     state=0
-    startingSymbol=0
-
-    def __init__(self,startingRules,cfg,first,startingSymbol,originState,state):
+    symbol=""
+    def __init__(self,startingRules,cfg,first,symbol,state):
         self.items=startingRules[:]
-        self.originState=originState
+        self.originItems=startingRules[:]
         self.state=state
-        self.startingSymbol=startingSymbol
-
+        self.symbol=symbol
 
         self.items=self.closure(self.items,cfg,first)
 
@@ -70,7 +68,7 @@ class ItemSet(object):
     def getGOTOs(self):
         """
         This function returns a list of tuples,
-        The the tuple contains the starting symbol,list containing all items to start a new itemset.
+        The the tuple contains the starting symbol,lookahead,list containing all items to start a new itemset.
         Their are grouped by terminal/nonterminal.
         Thus a new ItemSet needs to be generated per group
         """
@@ -84,6 +82,9 @@ class ItemSet(object):
         newItems1=[]
         newItems2=[]
         for symbol,itemlist in newItemsdict.items():
+            print "allemaal het zelde?"
+            for item in itemlist:
+                print item.lookahead
             if symbol[0].isupper():
                 newItems1.append(NewGoto(self.state,symbol,itemlist))
             else:

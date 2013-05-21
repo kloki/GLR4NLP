@@ -53,7 +53,7 @@ class Parser(object):
             
             if pathActions!=[]:#table empty, doesnt belong to grammar stop parsing    
                 for action in pathActions:
-                    if action=="acc":#sentence accepted
+                    if action=="accept":#sentence accepted
                         self.finishedPaths.append(path)
                     elif action[0]=="s":#move to shift list
                         self.shiftPaths.append(path.addAction(action))

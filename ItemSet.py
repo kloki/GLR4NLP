@@ -79,11 +79,17 @@ class ItemSet(object):
             if not item.itemFinished():
                 new=item.pushSelf()
                 newItemsdict=self.appendDict(newItemsdict,item.head(),new)
-        
-        newItems=[]
+       
+        #Ordering Nonterminals before terminals for readability
+        newItems1=[]
+        newItems2=[]
         for symbol,itemlist in newItemsdict.items():
-            newItems.append(NewGoto(self.state,symbol,itemlist))
-        return newItems
+            if symbol[0].isupper():
+                newItems1.append(NewGoto(self.state,symbol,itemlist))
+            else:
+                newItems2.append(NewGoto(self.state,symbol,itemlist))
+            
+        return newItems1+newItems2
 
     def appendDict(self,dictionary,key,element):
         if key in dictionary:

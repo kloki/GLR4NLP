@@ -101,9 +101,11 @@ class First(object):
     def getNonTerminals(self):
         return self.first.keys()
 
-    def getTerminals(self,nonTerminal):
-        return self.first[nonTerminal][:]
-
+    def getTerminals(self,symbol):
+        if symbol.isupper():
+            return self.first[symbol][:]
+        else:
+            return [symbol]
     # this way == and != work with this object
     def __eq__(self, other):
         if isinstance(other, self.__class__):

@@ -82,15 +82,28 @@ class ItemSet(object):
         newItems1=[]
         newItems2=[]
         for symbol,itemlist in newItemsdict.items():
-            print "allemaal het zelde?"
-            for item in itemlist:
-                print item.lookahead
             if symbol[0].isupper():
                 newItems1.append(NewGoto(self.state,symbol,itemlist))
             else:
                 newItems2.append(NewGoto(self.state,symbol,itemlist))
             
         return newItems1+newItems2
+
+
+    def update(self,items,cfg,first):
+        new=[]
+        
+        for i in items:
+            if i not in self.originItems:
+                self.originItems.append(i)
+                new.append(i)
+        
+        for newI in self.closure(new,cfg,first):
+            if newI not in self.items:
+                self.items.append(newI)
+        
+        
+
 
     def appendDict(self,dictionary,key,element):
         if key in dictionary:
@@ -100,8 +113,15 @@ class ItemSet(object):
         return dictionary
 
 
+    
     def __str__(self):
         string=""
         for i in self.items:
+            string=string+str(i)
+        return string
+
+    def stringItems(self,items):
+        string=""
+        for i in items:
             string=string+str(i)
         return string

@@ -87,6 +87,7 @@ class ParseTable(object):
                         used=True
                         #add relation
                         itemSetRelations.append((newGOTO.originState,newGOTO.symbol,itemset.state))
+                        itemset.update(newGOTO.items,cfg,first)
                         break
                 if used:#double break
                     break

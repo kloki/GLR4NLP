@@ -25,7 +25,7 @@ from Lexicon import Lexicon
 def main():
     pt=ParseTable()
     pt.load("test")
-    lex=Lexicon("dragon")
+    lex=Lexicon(sys.argv[2])
     p=Parser(pt,lex)
     p.parse(sys.argv[1])
 

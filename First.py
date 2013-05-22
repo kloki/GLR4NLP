@@ -91,7 +91,8 @@ class First(object):
         Add terminal to all items in list
         """
         for key in dictionary.iterkeys():
-            dictionary[key].append(terminal)
+            if terminal not in dictionary[key]:
+                dictionary[key].append(terminal)
             
         return dictionary
     

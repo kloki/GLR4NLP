@@ -16,13 +16,25 @@
 # Koen Klinkers k.klinkers@gmail.com
 
 class Node(object):
+    index=0
+    symbol="X"
+    parent=0
+    children=[]
 
-    def __init__(self):
-        pass
+
+    def __init__(self,index,symbol,parent,children):
+        self.index=index
+        self.symbol=symbol
+        self.parent=parent
+        self.children=children
+
+
+    def addChild(self,child):
+        self.children.append(child)
     
 
     def __str__(self):
-        pass
+        return str(self.index) +" "+self.symbol+" "+str(self.children)
 
 
     # this way == and != work with this object

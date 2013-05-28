@@ -23,7 +23,7 @@ import os
 from ItemSet import ItemSet
 from Item import Item
 from First import First
-
+from TreeStructure import TreeStructure
 
 class ParseTable(object):
     """
@@ -174,13 +174,14 @@ class ParseTable(object):
         
         with open(treeBank,"r") as f:
             trees=f.readlines()
-            for tree in treeBank:
+            for tree in trees:
                 self.generateFromTree(tree)
 
 
 
-    def generateFromTree(self,tree):
-        pass
+    def generateFromTree(self,treestring):
+        tree=TreeStructure(treestring)
+        print tree
                         
     def printItemSets(self,itemSets):
         string=""

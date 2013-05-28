@@ -15,16 +15,58 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
-class TreeStructure(object):
+from Node import Node
 
-    def __init__(self):
-        pass
-    
+class TreeStructure(object):
+    nodes={}
+    def __init__(self,treestring):
+        
+        chunks=treestring.split()
+        
+
+        self.nodes[0]=Node(0,chunks[0][1:],-1,[])
+        parentStack=[0]
+        index=1
+        
+        
+
+        
+        for chunk in chunks[1:]:
+            if chunk[0]=="(":#down in tree structure
+                self.nodes[index]=(Node(index,chunk[1:],parentStack[-1],[]))
+                self.nodes[parentStack[-1]].addChild(index)
+                parentStack.append(index)
+                index+=1
+                
+            elif chunk[-1]==")":#up in tree structure
+                chunky=chunk.split(")")
+                self.nodes[index]=(Node(index,chunky[0],parentStack[-1],[]))
+                self.nodes[parentStack[-1]].addChild(index)
+                index+=1
+                #pop parents
+                parentStack=parentStack[:-(len(chunky)-1)]
+            else: 
+                self.nodes[index]=(Node(index,chunk,parentStack[-1],[]))
+                self.nodes[parentStack[-1]].addChild(index)
+                index+=1
+
+        for i in self.nodes:
+            print self.nodes[i]
 
     def __str__(self):
-        pass
+        return self.printNode(self.nodes[0])
 
 
+
+    def printNode(self,node):
+        if len(node.children)==0:
+            return node.symbol
+        else:
+            string="("+node.symbol
+            for child in node.children:
+                string+=" "+self.printNode(self.nodes[child])
+            string+=")"
+            return string
     # this way == and != work with this object
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -34,3 +76,4 @@ class TreeStructure(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+

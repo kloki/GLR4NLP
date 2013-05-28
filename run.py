@@ -24,7 +24,7 @@ from ParseTable import ParseTable
 def main():
     cfg=CFG(sys.argv[1])
     pt=ParseTable()
-    pt.generateParseTable(cfg,sys.argv[2])
+    pt.generateFromGrammar(cfg,sys.argv[2])
     pt.texfile(True)
     print pt
     

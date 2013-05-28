@@ -15,20 +15,17 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
-class NewGoto(object):
-    originState=0
-    symbol=""
-    items=[]
-    def __init__(self,state,symbol,items):
-        """
-        items are of the Itemsclass
-        """
+class Node(object):
 
-        self.originState=state
-        self.symbol=symbol
-        self.items=items
-        
+    def __init__(self):
+        pass
     
+
+    def __str__(self):
+        pass
+
+
+    # this way == and != work with this object
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__

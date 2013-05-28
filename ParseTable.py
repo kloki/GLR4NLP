@@ -45,7 +45,7 @@ class ParseTable(object):
         
         pass
     
-    def generateParseTable(self, cfg,topSymbol):
+    def generateFromGrammar(self, cfg,topSymbol):
         """
         Creates parse table from a given grammar. 
         At the moment it is quite messy
@@ -87,7 +87,13 @@ class ParseTable(object):
                         used=True
                         #add relation
                         itemSetRelations.append((newGOTO.originState,newGOTO.symbol,itemset.state))
+                        #update Itemset, mostly new look ahead symbols will emerge for old items
+                        oldGOTOs=itemset.getGOTOs()
                         itemset.update(newGOTO.items,cfg,first)
+                        #but them in newGOTO as new items will cascade through old itemsets
+                        potentialGOTOs=itemset.getGOTOs()
+                        if len(potentialGOTOs)!=len(oldGOTOs):
+                            newGOTOs=newGOTOs+potentialGOTOs
                         break
                 if used:#double break
                     break
@@ -128,8 +134,8 @@ class ParseTable(object):
             self.actions[i]["$"]=[]#add endsymbol
 
             for nt in nonTerminals:
-                self.gotos[i][nt]=[]
         
+                self.gotos[i][nt]=[]
         #fill parsetable
         #GOTO table
                 
@@ -162,6 +168,19 @@ class ParseTable(object):
                         self.actions[itemset.state][item.lookahead].append("r"+str(item.index))
         
 
+
+
+    def generateFromTreeBank(self,treeBank):
+        
+        with open(treeBank,"r") as f:
+            trees=f.readlines()
+            for tree in treeBank:
+                self.generateFromTree(tree)
+
+
+
+    def generateFromTree(self,tree):
+        pass
                         
     def printItemSets(self,itemSets):
         string=""

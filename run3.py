@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+#
 # kloki
 #
 # This program is free software: you can redistribute it and/or modify
@@ -15,25 +17,17 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
-class NewGoto(object):
-    originState=0
-    symbol=""
-    items=[]
-    def __init__(self,state,symbol,items):
-        """
-        items are of the Itemsclass
-        """
+import sys
+from CFG import CFG
+from ParseTable import ParseTable
 
-        self.originState=state
-        self.symbol=symbol
-        self.items=items
-        
+def main():
+    pt=ParseTable()
+    pt.generateFromTreeBank(sys.argv[1])
+    pt.texfile(True)
+    print pt
     
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        else:
-            return False
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
+    pt.save("test")
+#-------------------------------
+if __name__ == "__main__":
+    main()

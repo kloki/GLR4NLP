@@ -183,16 +183,16 @@ class ParseTable(object):
         tree=TreeStructure(treestring)
         self.updateTableSymbols(tree.getAllSymbols())
         chains=tree.getLeftMostChains()
-        print chains
         currentChain=[]
         todo=["start"]
 
         while todo!=[]:
+            print todo
             #get action
-            do=todo.pop(0)
+            currentState=todo.pop(0)
             #get current state
-            state=self.states[do]
-            if do=="start":
+            state=self.states[currentState]
+            if currentState=="start":
                 currentChain=chains.pop(0)
                 for node in currentChain:
                     #check if exists
@@ -207,11 +207,46 @@ class ParseTable(object):
                     todo.append(node.symbol)
             else:
                 #get all the sibling belonging to this state given the current chain
-                
+                siblings=[]
+                symbol=currentState.split()[-1]
+                for node in currentChain:
+                    if node.symbol==symbol:
+                        siblings.append(tree.getRightSibling(node))
                 #get look ahead
-                
-            break
-    
+                lookahead=tree.getLookahead(currentChain[-1])
+                for sibling in siblings:
+                    if sibling=="$":
+                        if currentState=="S":
+                            self.actions[state]["$"].append("accept")
+                        else:
+                            self.actions[state][lookahead].append("r"+tree.getParentSymbol(node))#
+                    elif sibling.symbol[0].isupper():
+                        #get the chain with the current node as top
+                        index=0
+                        for i in xrange(len(chains)):
+                            if sibling==chains[i][0]:
+                                index=1
+                                break
+                        currentChain=chains.pop(index)
+                        for node in currentChain:
+                              #check if exists
+                            if node.symbol[0].isupper():
+                                newstate=currentState+" "+node.symbol
+                                if newstate not in self.states.keys():
+                                    self.createState(newstate)
+                                self.gotos[state][node.symbol].append(self.states[newstate])    
+                                todo.append(newstate)
+                            else:
+                                if node.symbol not in self.states.keys():
+                                    self.createState(node.symbol) 
+                                self.actions[state][node.symbol].append("s"+str(self.states[node.symbol]))
+                                todo.append(node.symbol)
+                    else:#sybling is terminal, the same as sybling is lookahead
+                        newstate=currentState+" "+sibling.symbol
+                        if newstate not in self.states.keys():
+                            self.createState(newstate)
+                        self.actions[state][sibling.symbol].append("s"+str(self.states[newstate]))
+                        todo.append(newstate)
 
     def createState(self,name):
         self.states[name]=len(self.actions.keys())
@@ -233,6 +268,7 @@ class ParseTable(object):
             self.states["start"]=0
             for terminal in terminals:
                 self.actions[0][terminal]=[]
+            self.actions[0]["$"]=[]
             for nonTerminal in nonTerminals:
                 self.gotos[0][nonTerminal]=[]
 
@@ -299,11 +335,11 @@ class ParseTable(object):
         numberOfNonTerminals=len(self.gotos[0])
         numberOfStats=len(self.actions)
         
-        tex.write("\\begin{tabular}{|l|"+"c"*numberOfTerminals+"|"+"l"*numberOfNonTerminals+"|}\n")
+        tex.write("\\begin{tabular}{|l|l|"+"c"*numberOfTerminals+"|"+"l"*numberOfNonTerminals+"|}\n")
         tex.write("\\hline\n")
-        tex.write("&\\multicolumn{"+str(numberOfTerminals)+"}{l|}{Actions} &\\multicolumn{"+str(numberOfNonTerminals)+"}{l|}{Goto}\\\\")
+        tex.write("&&\\multicolumn{"+str(numberOfTerminals)+"}{l|}{Actions} &\\multicolumn{"+str(numberOfNonTerminals)+"}{l|}{Goto}\\\\")
         tex.write("\\hline\n")
-        tex.write("State")
+        tex.write("&State")
         for key in self.actions[0].keys():
             if key =="$":
                 tex.write("&\\"+key)
@@ -314,7 +350,14 @@ class ParseTable(object):
         tex.write("\\\\\n")        
         tex.write("\\hline\n")
         
+        inverseStates={}
+        for name,state in self.states.iteritems():
+            inverseStates[state]=name
+        
         for state in self.actions.keys():
+            
+            tex.write(inverseStates[state])
+            tex.write("&")
             tex.write(str(state))
             for symbol in self.actions[state].keys():
                 tex.write("&")

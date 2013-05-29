@@ -94,7 +94,7 @@ class TreeStructure(object):
     def getLeftMostChains(self):
         chains=[]
 
-        for bottom in self.bottomNodes:
+        for bottom in self.bottomNodes: 
             chains.append(self.getChain(self.nodes[bottom]))
 
         return chains
@@ -104,7 +104,7 @@ class TreeStructure(object):
 
         if (node.parent !=-1 and self.isLeftChild(node)):
             chain=self.getChain(self.nodes[node.parent])
-
+            
         chain.append(node) 
         return chain
 
@@ -119,19 +119,24 @@ class TreeStructure(object):
         """
         returns right sibling of node. $ is none exist
         """
-        if node.index==self.nodes[node.parent].children[-1]:
+        
+        if node.parent==-1 or node.index==self.nodes[node.parent].children[-1]:
             return "$"
         else:
-            return self.nodes[self.nodes[node.parent].children[node.index+1]]
+            return self.nodes[self.nodes[node.parent].children[self.nodes[node.parent].children.index(node.index)+1]]
         
 
     def getLookahead(self,node):
         """
         the node should be an bottom
         """
-        return self.nodes[self.bottomNodes[self.bottomNodes[node.index]+1]]
+        if node.index==self.bottomNodes[-1]:
+            return "$"
+        else:
+            return self.nodes[self.bottomNodes[self.bottomNodes.index(node.index)+1]].symbol
 
-        
+    def getParentSymbol(self,node):
+        return self.nodes[node.parent].symbol
 
     # this way == and != work with this object
     def __eq__(self, other):

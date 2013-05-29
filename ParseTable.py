@@ -183,6 +183,7 @@ class ParseTable(object):
         tree=TreeStructure(treestring)
         self.updateTableSymbols(tree.getAllSymbols())
         chains=tree.getLeftMostChains()
+        print chains
         currentChain=[]
         todo=["start"]
 
@@ -204,6 +205,11 @@ class ParseTable(object):
                         self.actions[state][node.symbol].append("s"+str(self.states[node.symbol]))
                         
                     todo.append(node.symbol)
+            else:
+                #get all the sibling belonging to this state given the current chain
+                
+                #get look ahead
+                
             break
     
 

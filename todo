@@ -5,3 +5,38 @@ TableGeneration
 Parser
 -implement syncing
 -need handle empty goto entries
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Algorithm 
+
+until todostate is empty
+      
+      if start:
+      	 popfirst leftmost chain
+      	 -Add state for all non terminals from gotos,state name are non terminals add state
+	 -add shift state from terminal state name is terminal
+      if rightsybling = $ and state  = "S" 
+         add acc to $
+      
+      if rightsybling = $ 
+               apply reduce too parent from lookahead terminal. new state is current state with reduce aplied thus v det n will turn in to v VP
+
+      if rightsybling = terminal
+              shift to new state, state is current state + terminals
+      if right sybling = nonterminal:
+          popleftmost chain
+	  ass start
+      	 
+     

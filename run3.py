@@ -24,8 +24,7 @@ from ParseTable import ParseTable
 def main():
     pt=ParseTable()
     pt.generateFromTreeBank(sys.argv[1])
-    #pt.texfile(True)
-    print pt
+    pt.texfile(True)
     
     pt.save("test")
 #-------------------------------

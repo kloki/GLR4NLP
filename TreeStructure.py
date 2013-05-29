@@ -19,6 +19,7 @@ from Node import Node
 
 class TreeStructure(object):
     nodes={}
+    bottomNodes=[]
     def __init__(self,treestring):
         
         chunks=treestring.split()
@@ -32,6 +33,7 @@ class TreeStructure(object):
 
         
         for chunk in chunks[1:]:
+            
             if chunk[0]=="(":#down in tree structure
                 self.nodes[index]=(Node(index,chunk[1:],parentStack[-1],[]))
                 self.nodes[parentStack[-1]].addChild(index)
@@ -50,9 +52,12 @@ class TreeStructure(object):
                 self.nodes[parentStack[-1]].addChild(index)
                 index+=1
 
-        for i in self.nodes:
-            print self.nodes[i]
 
+
+        for key in self.nodes:
+            if self.nodes[key].children==[]:
+                self.bottomNodes.append(key)
+                
     def __str__(self):
         return self.printNode(self.nodes[0])
 
@@ -67,6 +72,49 @@ class TreeStructure(object):
                 string+=" "+self.printNode(self.nodes[child])
             string+=")"
             return string
+
+
+
+    def getAllSymbols(self):
+        terminals=[]
+        nonTerminals=[]
+        for node in self.nodes.itervalues():
+            if node.symbol[0].isupper():
+                if node.symbol not in nonTerminals:
+                    nonTerminals.append(node.symbol)
+            else:
+                if node.symbol not in terminals:
+                    terminals.append(node.symbol)
+            
+
+        return (terminals,nonTerminals)
+    
+
+
+    def getLeftMostChains(self):
+        chains=[]
+
+        for bottom in self.bottomNodes:
+            chains.append(self.getChain(self.nodes[bottom]))
+
+        return chains
+
+    def getChain(self,node):
+        chain=[]
+
+        if (node.parent !=-1 and self.isLeftChild(node)):
+            chain=self.getChain(self.nodes[node.parent])
+
+        chain.append(node) 
+        return chain
+
+    def isLeftChild(self,node):
+        return node.index==self.nodes[node.parent].children[0]
+
+
+    def
+        
+
     # this way == and != work with this object
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -77,3 +125,6 @@ class TreeStructure(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
+
+
+    

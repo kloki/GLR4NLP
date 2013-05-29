@@ -36,14 +36,14 @@ class ParseTable(object):
     actions={}
     gotos={}
     rules={}
-
+    states={}
     def __init__(self):
         """
         cfg is from the CFG class
         topsymbol indicates the top class grammar most of the time "TOP"
         """
         
-        pass
+        
     
     def generateFromGrammar(self, cfg,topSymbol):
         """
@@ -174,15 +174,54 @@ class ParseTable(object):
         
         with open(treeBank,"r") as f:
             trees=f.readlines()
-            for tree in trees:
+            for tree in trees[:1]:
                 self.generateFromTree(tree)
 
 
 
     def generateFromTree(self,treestring):
         tree=TreeStructure(treestring)
-        print tree
-                        
+        self.updateTableSymbols(tree.getAllSymbols())
+        chains=tree.getLeftMostChains()
+        index=len(self.actions.keys())
+
+        todo=["start"]
+
+        while todo!=[]:
+            do=todo.pop(0)
+            state=self.states[do]
+            chain=chains.pop()
+            self.updateState(state,chain)
+            
+    
+
+
+    def updateTableSymbols(self,symbols):
+        terminals=symbols[0]
+        nonTerminals=symbols[1]
+        if self.actions=={}:#empty table
+            self.actions[0]={}
+            self.gotos[0]={}
+            self.states["start"]=0
+            for terminal in terminals:
+                self.actions[0][terminal]=[]
+            for nonTerminal in nonTerminals:
+                self.gotos[0][nonTerminal]=[]
+
+
+        else:
+            terminals=set(terminals).difference(set(self.actions[0].keys()))
+            nonTerminals=set(nonTerminals).difference(set(self.gotos[0].keys()))
+            for  state in self.actions:
+                for terminal in terminals:
+                    self.actions[state][terminal]=[]
+            for state in self.gotos:
+                for nonTerminal in nonTerminals:
+                    self.gotos[state][nonTerminal]=[]
+
+
+
+
     def printItemSets(self,itemSets):
         string=""
         for i in itemSets:

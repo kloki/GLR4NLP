@@ -183,17 +183,39 @@ class ParseTable(object):
         tree=TreeStructure(treestring)
         self.updateTableSymbols(tree.getAllSymbols())
         chains=tree.getLeftMostChains()
-        index=len(self.actions.keys())
-
+        currentChain=[]
         todo=["start"]
 
         while todo!=[]:
+            #get action
             do=todo.pop(0)
+            #get current state
             state=self.states[do]
-            chain=chains.pop()
-            self.updateState(state,chain)
-            
+            if do=="start":
+                currentChain=chains.pop(0)
+                for node in currentChain:
+                    #check if exists
+                    if node.symbol not in self.states.keys():
+                        self.createState(node.symbol)
+                        
+                    if node.symbol[0].isupper():
+                        self.gotos[state][node.symbol].append(self.states[node.symbol])    
+                    else:
+                        self.actions[state][node.symbol].append("s"+str(self.states[node.symbol]))
+                        
+                    todo.append(node.symbol)
+            break
     
+
+    def createState(self,name):
+        self.states[name]=len(self.actions.keys())
+        self.actions[self.states[name]]={}
+        self.gotos[self.states[name]]={}
+        for i in self.actions[0].keys():
+            self.actions[self.states[name]][i]=[]
+        
+        for i in self.gotos[0].keys():
+            self.gotos[self.states[name]][i]=[]
 
 
     def updateTableSymbols(self,symbols):

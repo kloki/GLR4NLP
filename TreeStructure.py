@@ -109,10 +109,28 @@ class TreeStructure(object):
         return chain
 
     def isLeftChild(self,node):
+        """
+        checks if node is leftest child of parent.
+        """
         return node.index==self.nodes[node.parent].children[0]
 
 
-    def
+    def getRightSibling(self,node):
+        """
+        returns right sibling of node. $ is none exist
+        """
+        if node.index==self.nodes[node.parent].children[-1]:
+            return "$"
+        else:
+            return self.nodes[self.nodes[node.parent].children[node.index+1]]
+        
+
+    def getLookahead(self,node):
+        """
+        the node should be an bottom
+        """
+        return self.nodes[self.bottomNodes[self.bottomNodes[node.index]+1]]
+
         
 
     # this way == and != work with this object

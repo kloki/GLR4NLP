@@ -37,6 +37,7 @@ class ParseTable(object):
     gotos={}
     rules={}
     stateLabels={}
+    rulesList=[]
     def __init__(self):
         """
         cfg is from the CFG class
@@ -172,11 +173,23 @@ class ParseTable(object):
 
     def generateFromTreeBank(self,treeBank):
         
+        #bit of juggling with data structures
+        self.rulesList=[]
+        for rule in self.rules.itervalues():
+            self.rulesList.appendRule
+        
+
         with open(treeBank,"r") as f:
             trees=f.readlines()
             for tree in trees[:1]:
                 self.generateFromTree(tree)
 
+
+        self.rules={}
+        for rule in self.rulesList:
+            self.rules[rule.index]=rule
+
+        self.rulesList=[]
 
     def addAction(self,dic,state,symbol,action):
         if action not in dic[state][symbol]:
@@ -236,7 +249,8 @@ class ParseTable(object):
                         if currentState=="TOP":
                             self.addAction(self.actions,state,"$","accept")
                         else:
-                            self.addAction(self.actions,state,tree.getLookaheadNode(currentNode),("r"+tree.getParentSymbol(currentNode)))
+                            index=self.getIndex(tree.getRule(currentNode.parent))
+                            self.addAction(self.actions,state,tree.getLookaheadNode(currentNode),("r"+str(index)))
                     elif sibling.symbol[0].isupper():
                         #get the chain with the current node as top
                         currentChain=tree.getLeftMostChainHead(sibling)
@@ -272,6 +286,20 @@ class ParseTable(object):
         
         for i in self.gotos[0].keys():
             self.gotos[self.stateLabels[name]][i]=[]
+
+
+    def getIndex(self,rule):
+        index=0
+        present=False
+        for i in self.rulesList:
+            if i.lhs==rule.lhs and i.rhs==rule.rhs:
+                index=i.index
+                present=True
+        if not present:
+            rule.index=len(self.rulesList)
+            self.rulesList.append(rule)
+            index=rule.index
+        return index
 
 
     def updateTableSymbols(self,symbols):

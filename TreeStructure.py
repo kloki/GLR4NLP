@@ -16,6 +16,7 @@
 # Koen Klinkers k.klinkers@gmail.com
 
 from Node import Node
+from Rule import Rule
 
 class TreeStructure(object):
     nodes={}
@@ -186,6 +187,20 @@ class TreeStructure(object):
 
     def getParentSymbol(self,node):
         return self.nodes[node.parent].symbol
+
+    
+    def getRule(self,parentIndex):
+        """
+        returns the CFG rule corresponding based on the parent node
+        index and prob are still dumies values
+        """
+        lhs=self.nodes[parentIndex].symbol
+        rhs=[]
+        for i in self.nodes[parentIndex].children:
+            rhs.append(self.nodes[i].symbol)
+        return Rule(lhs,rhs,1,1)
+        
+
 
     # this way == and != work with this object
     def __eq__(self, other):

@@ -41,7 +41,7 @@ class Parser(object):
         while self.activePaths!=[]: 
             self.reduceUntillShift()
             self.shift()
-            self.printpaths()
+            #self.printpaths()
             self.prunePaths()
         
         self.printTrees()

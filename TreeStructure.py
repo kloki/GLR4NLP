@@ -169,6 +169,21 @@ class TreeStructure(object):
         else:
             return self.nodes[self.bottomNodes[self.bottomNodes.index(node.index)+1]].symbol
 
+    def getLookaheadNode(self,node):
+        
+        youngestChild=self.getYoungestChild(node)
+        return self.getLookahead(youngestChild)
+
+    def getYoungestChild(self,node):
+        """
+        rightbranching child
+        """
+        if node.children==[]:
+            return node
+        else:
+            return self.getYoungestChild(self.nodes[node.children[-1]])
+
+
     def getParentSymbol(self,node):
         return self.nodes[node.parent].symbol
 

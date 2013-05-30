@@ -220,19 +220,23 @@ class ParseTable(object):
             else:
                 #get all the siblings belonging to this state and its corresponding chain, Note siblings by definition don't belong to the current state
                 siblings=[]
+                currentNodes=[]
                 symbol=currentState.split()[-1]
                 
                 for node in state2chain[currentState]:
                     if node.symbol==symbol:
                         siblings.append(tree.getRightSibling(node))
-                #get look ahead
+                        currentNodes.append(node)
+              #get look ahead
                 lookahead=tree.getLookahead(state2chain[currentState][-1])
-                for sibling in siblings:
+                for i in xrange(len(siblings)):
+                    sibling=siblings[i]
+                    currentNode=currentNodes[i]
                     if sibling=="$":
                         if currentState=="TOP":
                             self.addAction(self.actions,state,"$","accept")
                         else:
-                            self.addAction(self.actions,state,lookahead,("r"+tree.getParentSymbol(node)))
+                            self.addAction(self.actions,state,tree.getLookaheadNode(currentNode),("r"+tree.getParentSymbol(currentNode)))
                     elif sibling.symbol[0].isupper():
                         #get the chain with the current node as top
                         currentChain=tree.getLeftMostChainHead(sibling)

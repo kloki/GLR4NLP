@@ -181,14 +181,14 @@ class ParseTable(object):
 
         with open(treeBank,"r") as f:
             trees=f.readlines()
-            for tree in trees[:1]:
+            for tree in trees[1:]:
                 self.generateFromTree(tree)
 
 
         self.rules={}
         for rule in self.rulesList:
             self.rules[rule.index]=rule
-
+            print rule
         self.rulesList=[]
 
     def addAction(self,dic,state,symbol,action):
@@ -215,16 +215,13 @@ class ParseTable(object):
             currentState=todo.pop(0)
             #get current state
             state=self.stateLabels[currentState]
-            print "NEWTODO"
-            print currentState
-            print state
             if currentState=="start":
                 currentChain=tree.getTopChain()
                 for node in currentChain:
                     #check if exists
                     if node.symbol not in self.stateLabels.keys():
                         self.createState(node.symbol)
-                        state2chain[node.symbol]=currentChain
+                    state2chain[node.symbol]=currentChain
                     if node.symbol[0].isupper():
                         self.addAction(self.gotos,state,node.symbol,self.stateLabels[node.symbol])    
                     else:
@@ -259,13 +256,13 @@ class ParseTable(object):
                                 newstate=currentState+" "+node.symbol
                                 if newstate not in self.stateLabels.keys():
                                     self.createState(newstate)
-                                    state2chain[newstate]=currentChain
+                                state2chain[newstate]=currentChain
                                 self.addAction(self.gotos,state,node.symbol,self.stateLabels[newstate])    
                                 todo.append(newstate)
                             else:
                                 if node.symbol not in self.stateLabels.keys():
                                     self.createState(node.symbol) 
-                                    state2chain[node.symbol]=currentChain
+                                state2chain[node.symbol]=currentChain
                                 self.addAction(self.actions,state,node.symbol,("s"+str(self.stateLabels[node.symbol])))
                                 todo.append(node.symbol)
                     else:#sybling is terminal, the same as sybling is lookahead. 
@@ -273,9 +270,10 @@ class ParseTable(object):
                         if newstate not in self.stateLabels.keys():
                             self.createState(newstate)
                             #because were dealing with terminals we can easily determine the new chain, the next one
-                            state2chain[newstate]=tree.getNextChain(state2chain[currentState])
+                        state2chain[newstate]=tree.getNextChain(state2chain[currentState])
                         self.addAction(self.actions,state,sibling.symbol,("s"+str(self.stateLabels[newstate])))
                         todo.append(newstate)
+    
 
     def createState(self,name):
         self.stateLabels[name]=len(self.actions.keys())

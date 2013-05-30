@@ -99,7 +99,6 @@ class TreeStructure(object):
 
     def generateLeftMostChains(self):
         chains=[]
-
         for bottom in self.bottomNodes: 
             chains.append(self.getChain(self.nodes[bottom]))
 
@@ -120,7 +119,7 @@ class TreeStructure(object):
         """
         chain=0
         for ch in self.leftMostChains:
-            if ch[0]==node:
+            if ch[0].index==node.index:
                 chain=ch[:]
 
         return chain

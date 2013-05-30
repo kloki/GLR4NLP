@@ -20,6 +20,7 @@ from Node import Node
 class TreeStructure(object):
     nodes={}
     bottomNodes=[]
+    leftMostChains=[]
     def __init__(self,treestring):
         
         chunks=treestring.split()
@@ -57,6 +58,10 @@ class TreeStructure(object):
         for key in self.nodes:
             if self.nodes[key].children==[]:
                 self.bottomNodes.append(key)
+
+
+
+        self.generateLeftMostChains()
                 
     def __str__(self):
         return self.printNode(self.nodes[0])
@@ -91,13 +96,42 @@ class TreeStructure(object):
     
 
 
-    def getLeftMostChains(self):
+    def generateLeftMostChains(self):
         chains=[]
 
         for bottom in self.bottomNodes: 
             chains.append(self.getChain(self.nodes[bottom]))
 
-        return chains
+        self.leftMostChains=chains
+
+
+    def getLeftMostChains(self):
+        return self.leftMostChains[:]
+
+
+
+    def getTopChain(self):
+        return self.leftMostChains[0]
+
+    def getLeftMostChainHead(self,node):
+        """
+        Returns the chain with the node as highest node
+        """
+        chain=0
+        for ch in self.leftMostChains:
+            if ch[0]==node:
+                chain=ch[:]
+
+        return chain
+
+    def getNextChain(self,chain):
+        """
+        Usefull when dealing with terminals
+        """
+        return self.leftMostChains[self.leftMostChains.index(chain)+1]
+
+
+
 
     def getChain(self,node):
         chain=[]
@@ -105,7 +139,7 @@ class TreeStructure(object):
         if (node.parent !=-1 and self.isLeftChild(node)):
             chain=self.getChain(self.nodes[node.parent])
             
-        chain.append(node) 
+        chain.append(node)
         return chain
 
     def isLeftChild(self,node):

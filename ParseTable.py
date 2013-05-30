@@ -36,7 +36,7 @@ class ParseTable(object):
     actions={}
     gotos={}
     rules={}
-    states={}
+    stateLabels={}
     def __init__(self):
         """
         cfg is from the CFG class
@@ -178,85 +178,96 @@ class ParseTable(object):
                 self.generateFromTree(tree)
 
 
+    def addAction(self,dic,state,symbol,action):
+        if action not in dic[state][symbol]:
+            dic[state][symbol].append(action)
+
 
     def generateFromTree(self,treestring):
+        
+
         tree=TreeStructure(treestring)
         self.updateTableSymbols(tree.getAllSymbols())
-        chains=tree.getLeftMostChains()
-        currentChain=[]
+        
+
+
         todo=["start"]
+        state2chain={}
+        state2chain["start"]=tree.getTopChain()
+
 
         while todo!=[]:
-            print todo
+            #print todo
             #get action
             currentState=todo.pop(0)
             #get current state
-            state=self.states[currentState]
+            state=self.stateLabels[currentState]
+            print "NEWTODO"
+            print currentState
+            print state
             if currentState=="start":
-                currentChain=chains.pop(0)
+                currentChain=tree.getTopChain()
                 for node in currentChain:
                     #check if exists
-                    if node.symbol not in self.states.keys():
+                    if node.symbol not in self.stateLabels.keys():
                         self.createState(node.symbol)
-                        
+                        state2chain[node.symbol]=currentChain
                     if node.symbol[0].isupper():
-                        self.gotos[state][node.symbol].append(self.states[node.symbol])    
+                        self.addAction(self.gotos,state,node.symbol,self.stateLabels[node.symbol])    
                     else:
-                        self.actions[state][node.symbol].append("s"+str(self.states[node.symbol]))
-                        
+                        self.addAction(self.actions,state,node.symbol,("s"+str(self.stateLabels[node.symbol])))
                     todo.append(node.symbol)
             else:
-                #get all the sibling belonging to this state given the current chain
+                #get all the siblings belonging to this state and its corresponding chain, Note siblings by definition don't belong to the current state
                 siblings=[]
                 symbol=currentState.split()[-1]
-                for node in currentChain:
+                
+                for node in state2chain[currentState]:
                     if node.symbol==symbol:
                         siblings.append(tree.getRightSibling(node))
                 #get look ahead
-                lookahead=tree.getLookahead(currentChain[-1])
+                lookahead=tree.getLookahead(state2chain[currentState][-1])
                 for sibling in siblings:
                     if sibling=="$":
-                        if currentState=="S":
-                            self.actions[state]["$"].append("accept")
+                        if currentState=="TOP":
+                            self.addAction(self.actions,state,"$","accept")
                         else:
-                            self.actions[state][lookahead].append("r"+tree.getParentSymbol(node))#
+                            self.addAction(self.actions,state,lookahead,("r"+tree.getParentSymbol(node)))
                     elif sibling.symbol[0].isupper():
                         #get the chain with the current node as top
-                        index=0
-                        for i in xrange(len(chains)):
-                            if sibling==chains[i][0]:
-                                index=1
-                                break
-                        currentChain=chains.pop(index)
+                        currentChain=tree.getLeftMostChainHead(sibling)
                         for node in currentChain:
-                              #check if exists
                             if node.symbol[0].isupper():
                                 newstate=currentState+" "+node.symbol
-                                if newstate not in self.states.keys():
+                                if newstate not in self.stateLabels.keys():
                                     self.createState(newstate)
-                                self.gotos[state][node.symbol].append(self.states[newstate])    
+                                    state2chain[newstate]=currentChain
+                                self.addAction(self.gotos,state,node.symbol,self.stateLabels[newstate])    
                                 todo.append(newstate)
                             else:
-                                if node.symbol not in self.states.keys():
+                                if node.symbol not in self.stateLabels.keys():
                                     self.createState(node.symbol) 
-                                self.actions[state][node.symbol].append("s"+str(self.states[node.symbol]))
+                                    state2chain[node.symbol]=currentChain
+                                self.addAction(self.actions,state,node.symbol,("s"+str(self.stateLabels[node.symbol])))
                                 todo.append(node.symbol)
-                    else:#sybling is terminal, the same as sybling is lookahead
+                    else:#sybling is terminal, the same as sybling is lookahead. 
                         newstate=currentState+" "+sibling.symbol
-                        if newstate not in self.states.keys():
+                        if newstate not in self.stateLabels.keys():
                             self.createState(newstate)
-                        self.actions[state][sibling.symbol].append("s"+str(self.states[newstate]))
+                            #because were dealing with terminals we can easily determine the new chain, the next one
+                            state2chain[newstate]=tree.getNextChain(state2chain[currentState])
+                        self.addAction(self.actions,state,sibling.symbol,("s"+str(self.stateLabels[newstate])))
                         todo.append(newstate)
 
     def createState(self,name):
-        self.states[name]=len(self.actions.keys())
-        self.actions[self.states[name]]={}
-        self.gotos[self.states[name]]={}
+        self.stateLabels[name]=len(self.actions.keys())
+        self.actions[self.stateLabels[name]]={}
+        self.gotos[self.stateLabels[name]]={}
         for i in self.actions[0].keys():
-            self.actions[self.states[name]][i]=[]
+            self.actions[self.stateLabels[name]][i]=[]
         
         for i in self.gotos[0].keys():
-            self.gotos[self.states[name]][i]=[]
+            self.gotos[self.stateLabels[name]][i]=[]
 
 
     def updateTableSymbols(self,symbols):
@@ -265,7 +276,7 @@ class ParseTable(object):
         if self.actions=={}:#empty table
             self.actions[0]={}
             self.gotos[0]={}
-            self.states["start"]=0
+            self.stateLabels["start"]=0
             for terminal in terminals:
                 self.actions[0][terminal]=[]
             self.actions[0]["$"]=[]
@@ -340,18 +351,22 @@ class ParseTable(object):
         tex.write("&&\\multicolumn{"+str(numberOfTerminals)+"}{l|}{Actions} &\\multicolumn{"+str(numberOfNonTerminals)+"}{l|}{Goto}\\\\")
         tex.write("\\hline\n")
         tex.write("&State")
-        for key in self.actions[0].keys():
+        terminals=self.actions[0].keys()
+        nonTerminals=self.gotos[0].keys()
+
+
+        for key in terminals:
             if key =="$":
                 tex.write("&\\"+key)
             else:
                 tex.write("&"+key)
-        for key in self.gotos[0].keys():
+        for key in nonTerminals:
             tex.write("&"+key)
         tex.write("\\\\\n")        
         tex.write("\\hline\n")
         
         inverseStates={}
-        for name,state in self.states.iteritems():
+        for name,state in self.stateLabels.iteritems():
             inverseStates[state]=name
         
         for state in self.actions.keys():
@@ -359,11 +374,11 @@ class ParseTable(object):
             tex.write(inverseStates[state])
             tex.write("&")
             tex.write(str(state))
-            for symbol in self.actions[state].keys():
+            for symbol in terminals:
                 tex.write("&")
                 for action in self.actions[state][symbol]:
                     tex.write(action+" ")
-            for symbol in self.gotos[state].keys():
+            for symbol in nonTerminals:
                 tex.write("&")
                 for goto in self.gotos[state][symbol]:
                     tex.write(str(goto)+" ")

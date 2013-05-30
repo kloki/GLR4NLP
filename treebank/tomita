@@ -1,2 +1,2 @@
-(S (NP det n) (VP v (NP n)))
-(S (S (NP n) (VP v (NP det n))) (PP prep (NP n)))
+(TOP (S (NP det n) (VP v (NP n))))
+(TOP (S (S (NP n) (VP v (NP det n))) (PP prep (NP n))))

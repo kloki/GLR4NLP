@@ -25,7 +25,7 @@ def main():
     pt=ParseTable()
     pt.generateFromTreeBank(sys.argv[1])
     pt.texfile(True)
-    
+    print pt
     pt.save("test")
 #-------------------------------
 if __name__ == "__main__":

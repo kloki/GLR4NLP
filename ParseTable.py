@@ -24,6 +24,7 @@ from ItemSet import ItemSet
 from Item import Item
 from First import First
 from TreeStructure import TreeStructure
+from StateLabel import StateLabel
 
 class ParseTable(object):
     """
@@ -181,7 +182,7 @@ class ParseTable(object):
 
         with open(treeBank,"r") as f:
             trees=f.readlines()
-            for tree in trees[1:]:
+            for tree in trees[:1]:
                 self.generateFromTree(tree)
 
 
@@ -203,76 +204,19 @@ class ParseTable(object):
         self.updateTableSymbols(tree.getAllSymbols())
         
 
-
-        todo=["start"]
-        state2chain={}
-        state2chain["start"]=tree.getTopChain()
-
-
+        
+        todo=[self.stateLabels[""]]
+        
+        #this mapping is differnt for each tree
         while todo!=[]:
-            #print todo
-            #get action
+            #get currentStateLabel
             currentState=todo.pop(0)
-            #get current state
-            state=self.stateLabels[currentState]
-            if currentState=="start":
-                currentChain=tree.getTopChain()
-                for node in currentChain:
-                    #check if exists
-                    if node.symbol not in self.stateLabels.keys():
-                        self.createState(node.symbol)
-                    state2chain[node.symbol]=currentChain
-                    if node.symbol[0].isupper():
-                        self.addAction(self.gotos,state,node.symbol,self.stateLabels[node.symbol])    
-                    else:
-                        self.addAction(self.actions,state,node.symbol,("s"+str(self.stateLabels[node.symbol])))
-                    todo.append(node.symbol)
-            else:
-                #get all the siblings belonging to this state and its corresponding chain, Note siblings by definition don't belong to the current state
-                siblings=[]
-                currentNodes=[]
-                symbol=currentState.split()[-1]
-                
-                for node in state2chain[currentState]:
-                    if node.symbol==symbol:
-                        siblings.append(tree.getRightSibling(node))
-                        currentNodes.append(node)
-              #get look ahead
-                lookahead=tree.getLookahead(state2chain[currentState][-1])
-                for i in xrange(len(siblings)):
-                    sibling=siblings[i]
-                    currentNode=currentNodes[i]
-                    if sibling=="$":
-                        if currentState=="TOP":
-                            self.addAction(self.actions,state,"$","accept")
-                        else:
-                            index=self.getIndex(tree.getRule(currentNode.parent))
-                            self.addAction(self.actions,state,tree.getLookaheadNode(currentNode),("r"+str(index)))
-                    elif sibling.symbol[0].isupper():
-                        #get the chain with the current node as top
-                        currentChain=tree.getLeftMostChainHead(sibling)
-                        for node in currentChain:
-                            if node.symbol[0].isupper():
-                                newstate=currentState+" "+node.symbol
-                                if newstate not in self.stateLabels.keys():
-                                    self.createState(newstate)
-                                state2chain[newstate]=currentChain
-                                self.addAction(self.gotos,state,node.symbol,self.stateLabels[newstate])    
-                                todo.append(newstate)
-                            else:
-                                if node.symbol not in self.stateLabels.keys():
-                                    self.createState(node.symbol) 
-                                state2chain[node.symbol]=currentChain
-                                self.addAction(self.actions,state,node.symbol,("s"+str(self.stateLabels[node.symbol])))
-                                todo.append(node.symbol)
-                    else:#sybling is terminal, the same as sybling is lookahead. 
-                        newstate=currentState+" "+sibling.symbol
-                        if newstate not in self.stateLabels.keys():
-                            self.createState(newstate)
-                            #because were dealing with terminals we can easily determine the new chain, the next one
-                        state2chain[newstate]=tree.getNextChain(state2chain[currentState])
-                        self.addAction(self.actions,state,sibling.symbol,("s"+str(self.stateLabels[newstate])))
-                        todo.append(newstate)
+            ##this mapping is differnt from each tree. Dummy value for state 0
+            state2chain={}
+            state2chain[""]=[]
+            #get siblings
+            siblings=self.getSiblings(currentState.getSymbol(),tree,state2chain[currentState.name])
+            
     
 
     def createState(self,name):
@@ -287,6 +231,9 @@ class ParseTable(object):
 
 
     def getIndex(self,rule):
+        """
+        if rule doesnt exist it is added to rules
+        """
         index=0
         present=False
         for i in self.rulesList:
@@ -299,6 +246,15 @@ class ParseTable(object):
             index=rule.index
         return index
 
+    def getSiblings(self,symbol,tree,chain):
+        siblings=[]
+        if symbol=="":
+            siblings.append(tree.getTopNode())
+        for node in chain:
+                    if node.symbol==symbol:
+                        siblings.append(tree.getRightSibling(node)
+                     
+        return siblings
 
     def updateTableSymbols(self,symbols):
         terminals=symbols[0]
@@ -306,7 +262,7 @@ class ParseTable(object):
         if self.actions=={}:#empty table
             self.actions[0]={}
             self.gotos[0]={}
-            self.stateLabels["start"]=0
+            self.stateLabels[""]=StateLabel("",[""],0)
             for terminal in terminals:
                 self.actions[0][terminal]=[]
             self.actions[0]["$"]=[]

@@ -22,6 +22,7 @@ class TreeStructure(object):
     nodes={}
     bottomNodes=[]
     leftMostChains=[]
+    state2chains={}
     def __init__(self,treestring):
         
         chunks=treestring.split()
@@ -49,7 +50,7 @@ class TreeStructure(object):
                 index+=1
                 #pop parents
                 parentStack=parentStack[:-(len(chunky)-1)]
-            else: 
+            else: #stay level
                 self.nodes[index]=(Node(index,chunk,parentStack[-1],[]))
                 self.nodes[parentStack[-1]].addChild(index)
                 index+=1
@@ -108,7 +109,14 @@ class TreeStructure(object):
     def getLeftMostChains(self):
         return self.leftMostChains[:]
 
+    def getChain(self,node):
+        chain=[]
 
+        if (node.parent !=-1 and self.isLeftChild(node)):
+            chain=self.getChain(self.nodes[node.parent])
+            
+        chain.append(node)
+        return chain
 
     def getTopChain(self):
         return self.leftMostChains[0]
@@ -124,24 +132,7 @@ class TreeStructure(object):
 
         return chain
 
-    def getNextChain(self,chain):
-        """
-        Usefull when dealing with terminals
-        """
-        return self.leftMostChains[self.leftMostChains.index(chain)+1]
-
-
-
-
-    def getChain(self,node):
-        chain=[]
-
-        if (node.parent !=-1 and self.isLeftChild(node)):
-            chain=self.getChain(self.nodes[node.parent])
-            
-        chain.append(node)
-        return chain
-
+    
     def isLeftChild(self,node):
         """
         checks if node is leftest child of parent.
@@ -160,34 +151,12 @@ class TreeStructure(object):
             return self.nodes[self.nodes[node.parent].children[self.nodes[node.parent].children.index(node.index)+1]]
         
 
-    def getLookahead(self,node):
-        """
-        the node should be an bottom
-        """
-        if node.index==self.bottomNodes[-1]:
-            return "$"
-        else:
-            return self.nodes[self.bottomNodes[self.bottomNodes.index(node.index)+1]].symbol
-
-    def getLookaheadNode(self,node):
-        
-        youngestChild=self.getYoungestChild(node)
-        return self.getLookahead(youngestChild)
-
-    def getYoungestChild(self,node):
-        """
-        rightbranching child
-        """
-        if node.children==[]:
-            return node
-        else:
-            return self.getYoungestChild(self.nodes[node.children[-1]])
-
-
     def getParentSymbol(self,node):
         return self.nodes[node.parent].symbol
 
     
+    def getTopNode(self):
+        return self.nodes[0]
     def getRule(self,parentIndex):
         """
         returns the CFG rule corresponding based on the parent node

@@ -121,14 +121,18 @@ class TreeStructure(object):
     def getTopChain(self):
         return self.leftMostChains[0]
 
-    def getLeftMostChainHead(self,node):
+    def getLeftMostChain(self,node):
         """
-        Returns the chain with the node as highest node
+        Returns the chain with the node as highest node, if terminal the highest chain is itself
         """
-        chain=0
+        chain=[node]
         for ch in self.leftMostChains:
             if ch[0].index==node.index:
                 chain=ch[:]
+                break
+        
+
+
 
         return chain
 

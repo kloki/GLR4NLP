@@ -216,7 +216,15 @@ class ParseTable(object):
             state2chain[""]=[]
             #get siblings
             siblings=self.getSiblings(currentState.getSymbol(),tree,state2chain[currentState.name])
-            
+            for sibling in siblings:
+                if sibling=="$":
+                    if currentState.name=="TOP":
+                        self.addAction(self.actions,currentState.index,"$","accept")
+                    else:
+                        print "reduce"
+                else:
+                    leftMost=tree.getLeftMostChain(sibling)
+                    
     
 
     def createState(self,name):
@@ -250,10 +258,11 @@ class ParseTable(object):
         siblings=[]
         if symbol=="":
             siblings.append(tree.getTopNode())
-        for node in chain:
-                    if node.symbol==symbol:
-                        siblings.append(tree.getRightSibling(node)
-                     
+        else:
+            for node in chain:
+                if node.symbol==symbol:
+                    siblings.append(tree.getRightSibling(node))
+                                    
         return siblings
 
     def updateTableSymbols(self,symbols):

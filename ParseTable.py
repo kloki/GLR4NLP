@@ -353,7 +353,7 @@ class ParseTable(object):
         
         inverseStates={}
         for name,state in self.stateLabels.iteritems():
-            inverseStates[state]=name
+            inverseStates[state.index]=name
         
         for state in self.actions.keys():
             

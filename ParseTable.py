@@ -206,14 +206,14 @@ class ParseTable(object):
 
         
         todo=[self.stateLabels[""]]
-        
+        ##this mapping is differnt from each tree. Dummy value for state 0
+        state2chain={}
+        state2chain[""]=[]
         #this mapping is differnt for each tree
         while todo!=[]:
             #get currentStateLabel
             currentState=todo.pop(0)
-            ##this mapping is differnt from each tree. Dummy value for state 0
-            state2chain={}
-            state2chain[""]=[]
+
             #get siblings
             siblings=self.getSiblings(currentState.getSymbol(),tree,state2chain[currentState.name])
             for sibling in siblings:
@@ -221,26 +221,47 @@ class ParseTable(object):
                     if currentState.name=="TOP":
                         self.addAction(self.actions,currentState.index,"$","accept")
                     else:
+                        indexRule=1
+                        self.addAction(self.actions,currentState.index,"$","r"+str(indexRule))
                         print "reduce"
+                        print currentState
+                        for i in state2chain[currentState.name]:
+                            print i
                 else:
-                    leftMost=tree.getLeftMostChain(sibling)
-                    
-    
-
-    def createState(self,name):
-        self.stateLabels[name]=len(self.actions.keys())
-        self.actions[self.stateLabels[name]]={}
-        self.gotos[self.stateLabels[name]]={}
-        for i in self.actions[0].keys():
-            self.actions[self.stateLabels[name]][i]=[]
+                    leftMostChain=tree.getLeftMostChain(sibling)
+                    for node in leftMostChain:
+                        if node.symbol.isupper():#nonterminal
+                            
+                            newstate=self.updateStates(currentState,node.symbol,currentState.name+" "+node.symbol)
+                            state2chain[newstate.name]=leftMostChain
+                            todo.append(newstate)
+                            self.addAction(self.gotos,currentState.index,node.symbol,newstate.index)
+                        else:
+                            newstate=self.updateStates(currentState,node.symbol,node.symbol)
+                            state2chain[newstate.name]=leftMostChain
+                            todo.append(newstate)
+                            self.addAction(self.actions,currentState.index,node.symbol,"s"+str(newstate.index))
+    def updateStates(self,oldstate,symbol,newname):
+        """
+        creates a new states if needed 
+        returns the approppiate state
+        """
+        if newname not in self.stateLabels.keys():
+            #create new
+            self.stateLabels[newname]=StateLabel(newname,symbol,len(self.actions.keys()))
+            self.actions[self.stateLabels[newname].index]={}
+            self.gotos[self.stateLabels[newname].index]={}
+            for i in self.actions[0].keys():
+                self.actions[self.stateLabels[newname].index][i]=[]
         
-        for i in self.gotos[0].keys():
-            self.gotos[self.stateLabels[name]][i]=[]
-
-
-    def getIndex(self,rule):
+            for i in self.gotos[0].keys():
+                self.gotos[self.stateLabels[newname].index][i]=[]
+        return self.stateLabels[newname]
+            
+    def getIndexRule(self,rule):
         """
         if rule doesnt exist it is added to rules
+        maybe the name is not good
         """
         index=0
         present=False
@@ -256,7 +277,7 @@ class ParseTable(object):
 
     def getSiblings(self,symbol,tree,chain):
         siblings=[]
-        if symbol=="":
+        if symbol=="":#start state
             siblings.append(tree.getTopNode())
         else:
             for node in chain:
@@ -271,7 +292,7 @@ class ParseTable(object):
         if self.actions=={}:#empty table
             self.actions[0]={}
             self.gotos[0]={}
-            self.stateLabels[""]=StateLabel("",[""],0)
+            self.stateLabels[""]=StateLabel("","",0)
             for terminal in terminals:
                 self.actions[0][terminal]=[]
             self.actions[0]["$"]=[]

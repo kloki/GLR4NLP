@@ -146,7 +146,7 @@ class TreeStructure(object):
 
     def getRightSibling(self,node):
         """
-        returns right sibling of node. $ is none exist
+        returns right sibling of node. $ if none exist
         """
         
         if node.parent==-1 or node.index==self.nodes[node.parent].children[-1]:

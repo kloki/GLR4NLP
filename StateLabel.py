@@ -17,23 +17,19 @@
 
 class StateLabel(object):
     name=""
-    symbols=[]
+    symbol=""
     index=0
-    def __init__(self,name,symbols,index):
+    def __init__(self,name,symbol,index):
         self.name=name
-        self.symbols=symbols
+        self.symbol=symbol
         self.index=index
     
 
     def __str__(self):
-        string=""
-        for i in symbols:
-            string+=i
-        return string
-
+        return self.name+" "+str(self.index)
 
     def getSymbol(self):
-        return self.symbols[-1]
+        return self.symbol
 
     # this way == and != work with this object
     def __eq__(self, other):

@@ -182,7 +182,7 @@ class ParseTable(object):
 
         with open(treeBank,"r") as f:
             trees=f.readlines()
-            for tree in trees[:1]:
+            for tree in trees[:]:
                 self.generateFromTree(tree)
 
 
@@ -236,11 +236,10 @@ class ParseTable(object):
                             newstate=self.updateStates(currentState,node.symbol,currentState.name+" "+node.symbol)
                             self.addAction(self.gotos,currentState.index,node.symbol,newstate.index)
                         else:
-                            if currentState.symbol.isupper():
-                                newname=node.symbol
+                            if leftMostChain[0].symbol.isupper():
+                                newstate=self.updateStates(currentState,node.symbol,node.symbol)
                             else:
-                                newname=currentState.name+" "+node.symbol
-                            newstate=self.updateStates(currentState,node.symbol,newname)
+                                newstate=self.updateStates(currentState,node.symbol,currentState.name+" "+node.symbol)
                             self.addAction(self.actions,currentState.index,node.symbol,"s"+str(newstate.index))
                         state2chain[newstate.name]=leftMostChain
                         if newstate.name not in state2node.keys():

@@ -37,11 +37,11 @@ class Parser(object):
         self.lookaheads.append("$") #add end symbol
         #start parsing
         self.activePaths.append(ParsePath([0],"none",0,0))#no tree and log likelihood 0
-
+        print self.words
         while self.activePaths!=[]: 
             self.reduceUntillShift()
             self.shift()
-            #self.printpaths()
+            self.printpaths()
             self.prunePaths()
         
         self.printTrees()

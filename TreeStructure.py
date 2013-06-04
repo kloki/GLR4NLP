@@ -23,6 +23,7 @@ class TreeStructure(object):
     bottomNodes=[]
     leftMostChains=[]
     state2chains={}
+    lookaheads={}
     def __init__(self,treestring):
         
         chunks=treestring.split()
@@ -62,9 +63,13 @@ class TreeStructure(object):
                 self.bottomNodes.append(key)
 
 
-
-        self.generateLeftMostChains()
                 
+        self.generateLeftMostChains()
+        self.generateLookAheads() 
+
+
+
+    
     def __str__(self):
         return self.printNode(self.nodes[0])
 
@@ -106,9 +111,7 @@ class TreeStructure(object):
         self.leftMostChains=chains
 
 
-    def getLeftMostChains(self):
-        return self.leftMostChains[:]
-
+   
     def getChain(self,node):
         chain=[]
 
@@ -117,6 +120,24 @@ class TreeStructure(object):
             
         chain.append(node)
         return chain
+
+    def generateLookAheads(self):
+        for i in xrange(len(self.bottomNodes)):
+            if i+1 == len(self.bottomNodes):
+                lookahead="$"
+            else:
+                lookahead=self.nodes[self.bottomNodes[i+1]].symbol
+            self.updateLookaheadNode(self.nodes[self.bottomNodes[i]],lookahead)
+
+    def updateLookaheadNode(self,node,symbol):
+        self.lookaheads[node.index]=symbol
+        if self.isRightChild(node):
+            self.updateLookaheadNode(self.nodes[node.parent],symbol)
+
+
+
+    def getLeftMostChains(self):
+        return self.leftMostChains[:]
 
     def getTopChain(self):
         return self.leftMostChains[0]
@@ -130,26 +151,12 @@ class TreeStructure(object):
             if ch[0].index==node.index:
                 chain=ch[:]
                 break
-        
-
-
 
         return chain
     
 
     def getLookahead(self,node):
-        
-        if node.symbol.islower():
-            bottom=node.index
-        for i in self.leftMostChains:
-            if node in i:
-                bottom=i[-1].index
-                break
-        newindex=self.bottomNodes.index(bottom)+1
-        if newindex==len(self.bottomNodes):
-            return "$"
-        else:
-            return self.nodes[self.bottomNodes[newindex]].symbol
+        return self.lookaheads[node.index]
         
 
     def isLeftChild(self,node):
@@ -157,6 +164,14 @@ class TreeStructure(object):
         checks if node is leftest child of parent.
         """
         return node.index==self.nodes[node.parent].children[0]
+
+    def isRightChild(self,node):
+        """
+        checks if node is leftest child of parent.
+        """
+        if node.parent==-1:
+            return False
+        return node.index==self.nodes[node.parent].children[-1]
 
 
     def getRightSibling(self,node):

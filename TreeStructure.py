@@ -135,8 +135,23 @@ class TreeStructure(object):
 
 
         return chain
-
     
+
+    def getLookahead(self,node):
+        
+        if node.symbol.islower():
+            bottom=node.index
+        for i in self.leftMostChains:
+            if node in i:
+                bottom=i[-1].index
+                break
+        newindex=self.bottomNodes.index(bottom)+1
+        if newindex==len(self.bottomNodes):
+            return "$"
+        else:
+            return self.nodes[self.bottomNodes[newindex]].symbol
+        
+
     def isLeftChild(self,node):
         """
         checks if node is leftest child of parent.
@@ -161,6 +176,8 @@ class TreeStructure(object):
     
     def getTopNode(self):
         return self.nodes[0]
+
+
     def getRule(self,parentIndex):
         """
         returns the CFG rule corresponding based on the parent node

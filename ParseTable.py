@@ -189,7 +189,7 @@ class ParseTable(object):
         self.rules={}
         for rule in self.rulesList:
             self.rules[rule.index]=rule
-            print rule
+
         self.rulesList=[]
 
     def addAction(self,dic,state,symbol,action):
@@ -206,41 +206,49 @@ class ParseTable(object):
 
         
         todo=[self.stateLabels[""]]
-        ##this mapping is differnt from each tree. Dummy value for state 0
+        ##this mappings are differnt from each tree. Dummy value for state 0
         state2chain={}
         state2chain[""]=[]
+        state2node={}
+        state2node[""]=[]
+        
         #this mapping is differnt for each tree
         while todo!=[]:
             #get currentStateLabel
             currentState=todo.pop(0)
-
             #get siblings
             siblings=self.getSiblings(currentState.getSymbol(),tree,state2chain[currentState.name])
             for sibling in siblings:
                 if sibling=="$":
-                    if currentState.name=="TOP":
+                    if currentState.name==" TOP":
                         self.addAction(self.actions,currentState.index,"$","accept")
                     else:
-                        indexRule=1
-                        self.addAction(self.actions,currentState.index,"$","r"+str(indexRule))
-                        print "reduce"
-                        print currentState
-                        for i in state2chain[currentState.name]:
-                            print i
+                        for node in state2node[currentState.name]:
+                            indexRule=self.getIndexRule(tree.getRule(node.parent))
+                            self.addAction(self.actions,currentState.index,tree.getLookahead(node),"r"+str(indexRule))
+                            
+                            #print currentState
+                            #print node
                 else:
                     leftMostChain=tree.getLeftMostChain(sibling)
                     for node in leftMostChain:
-                        if node.symbol.isupper():#nonterminal
-                            
+                        if node.symbol.isupper():#nonterminal 
                             newstate=self.updateStates(currentState,node.symbol,currentState.name+" "+node.symbol)
-                            state2chain[newstate.name]=leftMostChain
-                            todo.append(newstate)
                             self.addAction(self.gotos,currentState.index,node.symbol,newstate.index)
                         else:
-                            newstate=self.updateStates(currentState,node.symbol,node.symbol)
-                            state2chain[newstate.name]=leftMostChain
-                            todo.append(newstate)
+                            if currentState.symbol.isupper():
+                                newname=node.symbol
+                            else:
+                                newname=currentState.name+" "+node.symbol
+                            newstate=self.updateStates(currentState,node.symbol,newname)
                             self.addAction(self.actions,currentState.index,node.symbol,"s"+str(newstate.index))
+                        state2chain[newstate.name]=leftMostChain
+                        if newstate.name not in state2node.keys():
+                            state2node[newstate.name]=[node]
+                        else:
+                            state2node[newstate.name].append(node)
+                        todo.append(newstate)
+                
     def updateStates(self,oldstate,symbol,newname):
         """
         creates a new states if needed 
@@ -337,6 +345,11 @@ class ParseTable(object):
                 if self.gotos[i][j]!=[]:
                     for k in self.gotos[i][j]:
                         string+="GOTO("+str(i)+","+j+")="+str(k)+"\n"
+
+
+        string+="\nRules\n"
+        for i in self.rules.itervalues():
+            string+=str(i)
 
         return string
 

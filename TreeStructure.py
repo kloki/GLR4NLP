@@ -22,12 +22,9 @@ class TreeStructure(object):
     nodes={}
     bottomNodes=[]
     leftMostChains=[]
-    state2chains={}
     lookaheads={}
-    def __init__(self,treestring):
-        
+    def __init__(self,treestring):        
         chunks=treestring.split()
-        
 
         self.nodes[0]=Node(0,chunks[0][1:],-1,[])
         parentStack=[0]
@@ -51,19 +48,18 @@ class TreeStructure(object):
                 index+=1
                 #pop parents
                 parentStack=parentStack[:-(len(chunky)-1)]
-            else: #stay level
+            else: #stay level 
                 self.nodes[index]=(Node(index,chunk,parentStack[-1],[]))
                 self.nodes[parentStack[-1]].addChild(index)
                 index+=1
 
-
-
+        self.bottomNodes=[]
         for key in self.nodes:
             if self.nodes[key].children==[]:
                 self.bottomNodes.append(key)
 
-
-                
+        self.leftMostChain=[]
+        
         self.generateLeftMostChains()
         self.generateLookAheads() 
 
@@ -205,6 +201,11 @@ class TreeStructure(object):
         return Rule(lhs,rhs,1,1)
         
 
+    def printLeftMostChains(self):
+        for chain in self.leftMostChains:
+            print self.leftMostChains.index(chain)
+            for node in chain:
+                print node
 
     # this way == and != work with this object
     def __eq__(self, other):

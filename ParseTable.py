@@ -201,6 +201,7 @@ class ParseTable(object):
         
 
         tree=TreeStructure(treestring)
+        
         self.updateTableSymbols(tree.getAllSymbols())
         
 
@@ -214,6 +215,7 @@ class ParseTable(object):
         
         #this mapping is differnt for each tree
         while todo!=[]:
+            
             #get currentStateLabel
             currentState=todo.pop(0)
             #get siblings
@@ -247,6 +249,7 @@ class ParseTable(object):
                         else:
                             state2node[newstate.name].append(node)
                         todo.append(newstate)
+        
                 
     def updateStates(self,oldstate,symbol,newname):
         """

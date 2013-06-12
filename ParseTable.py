@@ -182,7 +182,7 @@ class ParseTable(object):
 
         with open(treeBank,"r") as f:
             trees=f.readlines()
-            for tree in trees[:]:
+            for tree in trees[1:]:
                 self.generateFromTree(tree)
 
 

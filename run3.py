@@ -18,7 +18,6 @@
 # Koen Klinkers k.klinkers@gmail.com
 
 import sys
-from CFG import CFG
 from ParseTable import ParseTable
 
 def main():

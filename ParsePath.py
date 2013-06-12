@@ -59,9 +59,11 @@ class ParsePath(object):
         # update loglikelihood
         self.loglikelihood+=rule.loglikelihood
 
-        return (self.stack[-2],self.stack[-1])
-
-
+        try:
+            return (self.stack[-2],self.stack[-1])
+        except:
+            return 0 #reduce not possible
+        
     def shift(self,terminal):
         newstack=self.stack[:]
         newstack.append(terminal)

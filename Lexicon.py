@@ -15,31 +15,76 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
+import cPickle as pickle
+
 class Lexicon(object):
     """
-    for now it is still a dummy lexicon function
+    extracts the lexical words from tree bank and stores them.
     """
-    transform={}
-    def __init__(self,grammar):
-        if grammar=="tomita":
-            self.transform["i"]="n"
-            self.transform["saw"]="v"
-            self.transform["a"]="det"
-            self.transform["man"]="n"
-            self.transform["with"]="prep"
-            self.transform["telescope"]="n"
-        elif grammar=="dragon":
-            self.transform["c"]="c"
-            self.transform["d"]="d"
+    def __init__(self,treebankName,name):
 
-    def transformWords(self,words):
-        transformed=[]
-        for word in words:
-            transformed.append(self.transform[word])
-        return transformed
+        
+        f=open(treebankName,"r")
+        treebank=f.read()
+        f.close()
 
-    def getCategorie(self,word):
-        return self.transform[word]
+        #some sanitizing
+        treebank=treebank.replace(" (, ,)","")
+        treebank=treebank.replace(" (. .)","")
+        treebank=treebank.replace(" (. ?)","")
+        treebank=treebank.replace(" (. !)","")
+        treebank=treebank.replace(" (\" \")","")
+        treebank=treebank.replace(" (' ')","")
+        treebank=treebank.replace(" ('' '')","")
+        treebank=treebank.replace(" (`` ``)","")
+        treebank=treebank.replace(" (; ;)","")
+        treebank=treebank.replace(" (: :)","")
+        treebank=treebank.replace(" (-LRB- -LRB-)","")
+        treebank=treebank.replace(" (-RRB- -RRB-)","")
+        treebank=treebank.replace(") )","))")
+
+
+        #extract the terminals
+        index=0
+        trees=treebank.split("\n")
+        outputTrees=open(name,"w")
+        transform={}
+        for tree in trees:
+            words=tree.split()
+            transform[index]=[]
+            for i in xrange(len(words)):
+                
+                if ")" in words[i]:
+                    (lb,nonterminal)=self.breakup(words[i-1],"(")
+                    (terminal,rb)=self.breakup(words[i],")")
+                    nonterminal2=nonterminal.lower()
+                    words[i]=nonterminal2+rb
+                    transform[index].append((nonterminal2,terminal))
+            string=""
+            for word in words:
+                string+=word+" "
+            outputTrees.write(string[:-1]+"\n")
+            index+=1
+        
+
+        outputTrees.close()
+        pickle.dump( transform, open( name+".lex", "wb" ) )
+
+        for i,k in transform.iteritems():
+            print i
+            print k
+
 
     def __str__(self):
         pass
+
+
+    def breakup(self, string,symbol):
+        if symbol==string[0]:
+            for i in xrange(len(string)):
+                if string[i]!=symbol:
+                    return (string[:i],string[i:])
+        else:
+            for i in xrange(len(string)):
+                if string[i]==symbol:
+                    return (string[:i],string[i:])

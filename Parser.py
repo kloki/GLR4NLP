@@ -37,11 +37,9 @@ class Parser(object):
         self.lookaheads.append("$") #add end symbol
         #start parsing
         self.activePaths.append(ParsePath([0],"none",0,0))#no tree and log likelihood 0
-        print self.words
         while self.activePaths!=[]: 
             self.reduceUntillShift()
             self.shift()
-            self.printpaths()
             self.prunePaths()
         
         self.printTrees()
@@ -60,8 +58,9 @@ class Parser(object):
                     elif action[0]=="r":#reduce stack and apply goto
                         newpath=path.addAction(action)
                         goto=newpath.reduce(self.parseTable.getRule(action))
-                        newpath.goto(self.parseTable.getGOTO(goto[0],goto[1]))
-                        self.activePaths.append(newpath)
+                        if goto!=0:#in a proper table this will never happen. (Reduce action that is not possible)
+                            newpath.goto(self.parseTable.getGOTO(goto[0],goto[1]))
+                            self.activePaths.append(newpath)
                         
 
     def shift(self):

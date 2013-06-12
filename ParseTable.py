@@ -183,6 +183,7 @@ class ParseTable(object):
         with open(treeBank,"r") as f:
             trees=f.readlines()
             for tree in trees[1:]:
+                print tree
                 self.generateFromTree(tree)
 
 
@@ -207,7 +208,7 @@ class ParseTable(object):
 
         
         todo=[self.stateLabels[""]]
-        ##this mappings are differnt from each tree. Dummy value for state 0
+       ##this mappings are differnt from each tree. Dummy value for state 0
         state2chain={}
         state2chain[""]=[]
         state2node={}

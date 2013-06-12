@@ -70,9 +70,6 @@ class Lexicon(object):
         outputTrees.close()
         pickle.dump( transform, open( name+".lex", "wb" ) )
 
-        for i,k in transform.iteritems():
-            print i
-            print k
 
 
     def __str__(self):

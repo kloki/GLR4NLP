@@ -112,6 +112,7 @@ class TreeStructure(object):
         chain=[]
 
         if (node.parent !=-1 and self.isLeftChild(node)):
+            print self.nodes[node.parent]
             chain=self.getChain(self.nodes[node.parent])
             
         chain.append(node)

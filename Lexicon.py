@@ -16,14 +16,19 @@
 # Koen Klinkers k.klinkers@gmail.com
 
 import cPickle as pickle
-
+from LexicalItem import LexicalItem
 class Lexicon(object):
-    """
-    extracts the lexical words from tree bank and stores them.
-    """
-    def __init__(self,treebankName,path):
+    
+    lexicon={}
+    def __init__(self):
+        pass
 
-        
+    def extractFromTreebank(self,treebankName,path):
+    
+        """
+        extracts the lexical words from tree bank and stores them.
+        Also creates a sanatized treebank
+        """
         f=open(treebankName,"r")
         treebank=f.read()
         f.close()
@@ -45,13 +50,10 @@ class Lexicon(object):
 
 
         #extract the terminals
-        index=0
         trees=treebank.split("\n")
         outputTrees=open(path+"treebank","w")
-        transform={}
         for tree in trees:
             words=tree.split()
-            transform[index]=[]
             for i in xrange(len(words)):
                 
                 if ")" in words[i]:
@@ -60,22 +62,36 @@ class Lexicon(object):
                     nonterminal2=nonterminal.lower()
                     words[i-1]=""
                     words[i]=nonterminal2+rb[:-1]
-                    transform[index].append((nonterminal2,terminal))
+                    self.updateLexicon(terminal,nonterminal)
             string=""
             for word in words:
                 if word!="":
                     string+=word+" "
             outputTrees.write(string[:-1]+"\n")
-            index+=1
         
 
         outputTrees.close()
-        pickle.dump( transform, open( path+"lexicon.lex", "wb" ) )
+
+        for lexicalitem in self.lexicon.itervalues():
+            lexicalitem.normalise()
+        
+        pickle.dump( self.lexicon, open( path+"lexicon.lex", "wb" ) )
+
+
 
 
 
     def __str__(self):
         pass
+
+
+
+    def updateLexicon(self,terminal,nonterminal):
+        if terminal not in self.lexicon:
+            self.lexicon[terminal]=LexicalItem(terminal,nonterminal)
+        else:
+            self.lexicon[terminal].updateCategorie(nonterminal)
+
 
 
     def breakup(self, string,symbol):

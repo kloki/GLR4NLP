@@ -38,8 +38,8 @@ def main():
     log.write("time: "+str(now)+"\n")
     log.write("comments:\n"+comments+"\n")
 
-
-    lex=Lexicon("treebank/"+treebank,path)
+    lex=Lexicon()
+    lex.extractFromTreebank("treebank/"+treebank,path)
     
     pt=ParseTable()
     pt.generateFromTreeBank(path+"treebank")

@@ -182,8 +182,7 @@ class ParseTable(object):
 
         with open(treeBank,"r") as f:
             trees=f.readlines()
-            for tree in trees[1:]:
-                print tree
+            for tree in trees[:]:
                 self.generateFromTree(tree)
 
 
@@ -208,58 +207,47 @@ class ParseTable(object):
 
         
         todo=[self.stateLabels[""]]
-       ##this mappings are differnt from each tree. Dummy value for state 0
-        state2chain={}
-        state2chain[""]=[]
-        state2node={}
-        state2node[""]=[]
-        
-        #this mapping is differnt for each tree
         while todo!=[]:
             
             #get currentStateLabel
             currentState=todo.pop(0)
-            #get siblings
-            siblings=self.getSiblings(currentState.getSymbol(),tree,state2chain[currentState.name])
-            for sibling in siblings:
+            #get nodes
+            nodes=tree.getNodes(currentState.symbols)
+                
+            for currentNode in nodes:
+                
+                sibling=tree.getSibling(currentNode)
                 if sibling=="$":
                     if currentState.name==" TOP":
                         self.addAction(self.actions,currentState.index,"$","accept")
                     else:
-                        for node in state2node[currentState.name]:
-                            indexRule=self.getIndexRule(tree.getRule(node.parent))
-                            self.addAction(self.actions,currentState.index,tree.getLookahead(node),"r"+str(indexRule))
-                            
-                            #print currentState
-                            #print node
+                        indexRule=self.getIndexRule(tree.getRule(currentNode.parent))
+                        self.addAction(self.actions,currentState.index,tree.getLookahead(currentNode),"r"+str(indexRule))
+
                 else:
                     leftMostChain=tree.getLeftMostChain(sibling)
                     for node in leftMostChain:
                         if node.symbol.isupper():#nonterminal 
-                            newstate=self.updateStates(currentState,node.symbol,currentState.name+" "+node.symbol)
+                            newstate=self.updateStates(currentState,currentState.symbols[:]+[node.symbol],currentState.name+" "+node.symbol)
                             self.addAction(self.gotos,currentState.index,node.symbol,newstate.index)
                         else:
                             if leftMostChain[0].symbol.isupper():
-                                newstate=self.updateStates(currentState,node.symbol,node.symbol)
+                                newstate=self.updateStates(currentState,[node.symbol],node.symbol)
                             else:
-                                newstate=self.updateStates(currentState,node.symbol,currentState.name+" "+node.symbol)
+                                newstate=self.updateStates(currentState,currentState.symbols[:]+[node.symbol],currentState.name+" "+node.symbol)
                             self.addAction(self.actions,currentState.index,node.symbol,"s"+str(newstate.index))
-                        state2chain[newstate.name]=leftMostChain
-                        if newstate.name not in state2node.keys():
-                            state2node[newstate.name]=[node]
-                        else:
-                            state2node[newstate.name].append(node)
-                        todo.append(newstate)
+                        if newstate not in todo:
+                            todo.append(newstate)
         
                 
-    def updateStates(self,oldstate,symbol,newname):
+    def updateStates(self,oldstate,symbols,newname):
         """
         creates a new states if needed 
         returns the approppiate state
         """
         if newname not in self.stateLabels.keys():
             #create new
-            self.stateLabels[newname]=StateLabel(newname,symbol,len(self.actions.keys()))
+            self.stateLabels[newname]=StateLabel(newname,symbols,len(self.actions.keys()))
             self.actions[self.stateLabels[newname].index]={}
             self.gotos[self.stateLabels[newname].index]={}
             for i in self.actions[0].keys():
@@ -286,16 +274,6 @@ class ParseTable(object):
             index=rule.index
         return index
 
-    def getSiblings(self,symbol,tree,chain):
-        siblings=[]
-        if symbol=="":#start state
-            siblings.append(tree.getTopNode())
-        else:
-            for node in chain:
-                if node.symbol==symbol:
-                    siblings.append(tree.getRightSibling(node))
-                                    
-        return siblings
 
     def updateTableSymbols(self,symbols):
         terminals=symbols[0]
@@ -303,7 +281,7 @@ class ParseTable(object):
         if self.actions=={}:#empty table
             self.actions[0]={}
             self.gotos[0]={}
-            self.stateLabels[""]=StateLabel("","",0)
+            self.stateLabels[""]=StateLabel("",[],0)
             for terminal in terminals:
                 self.actions[0][terminal]=[]
             self.actions[0]["$"]=[]

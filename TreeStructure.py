@@ -112,7 +112,7 @@ class TreeStructure(object):
         chain=[]
 
         if (node.parent !=-1 and self.isLeftChild(node)):
-            print self.nodes[node.parent]
+            
             chain=self.getChain(self.nodes[node.parent])
             
         chain.append(node)
@@ -182,6 +182,13 @@ class TreeStructure(object):
             return self.nodes[self.nodes[node.parent].children[self.nodes[node.parent].children.index(node.index)+1]]
         
 
+    def getSibling(self,node):
+        if node=="start":
+            return self.getTopNode()
+        else:
+            return self.getRightSibling(node)
+        
+
     def getParentSymbol(self,node):
         return self.nodes[node.parent].symbol
 
@@ -201,6 +208,27 @@ class TreeStructure(object):
             rhs.append(self.nodes[i].symbol)
         return Rule(lhs,rhs,1,1)
         
+
+    def getNodes(self,symbols):
+        """
+        This function will return al list of nodes whci match a certain state label
+        """
+        if symbols==[]:#beginning of tree
+            return ["start"]
+        if symbols==["TOP"]:
+            return [self.getTopNode()]
+        else:
+            nodes=[]
+            for parent in self.nodes.itervalues():
+                if len(symbols)<=len(parent.children):
+                    symbols2=[]
+                    for x in xrange(len(symbols)):
+                        symbols2.append(self.nodes[parent.children[x]].symbol)
+                        if symbols==symbols2:
+                            nodes.append(self.nodes[parent.children[len(symbols)-1]])
+
+            return nodes
+
 
     def printLeftMostChains(self):
         for chain in self.leftMostChains:

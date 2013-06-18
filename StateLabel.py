@@ -17,11 +17,11 @@
 
 class StateLabel(object):
     name=""
-    symbol=""
+    symbols=""
     index=0
-    def __init__(self,name,symbol,index):
+    def __init__(self,name,symbols,index):
         self.name=name
-        self.symbol=symbol
+        self.symbols=symbols
         self.index=index
     
 
@@ -29,7 +29,7 @@ class StateLabel(object):
         return self.name+" "+str(self.index)
 
     def getSymbol(self):
-        return self.symbol
+        return self.symbols[-1]
 
     # this way == and != work with this object
     def __eq__(self, other):

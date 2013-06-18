@@ -58,11 +58,13 @@ class Lexicon(object):
                     (lb,nonterminal)=self.breakup(words[i-1],"(")
                     (terminal,rb)=self.breakup(words[i],")")
                     nonterminal2=nonterminal.lower()
-                    words[i]=nonterminal2+rb
+                    words[i-1]=""
+                    words[i]=nonterminal2+rb[:-1]
                     transform[index].append((nonterminal2,terminal))
             string=""
             for word in words:
-                string+=word+" "
+                if word!="":
+                    string+=word+" "
             outputTrees.write(string[:-1]+"\n")
             index+=1
         

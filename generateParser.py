@@ -25,12 +25,24 @@ from Parser import Parser
 from Lexicon import Lexicon
 
 def main():
-    name=raw_input("What is the name of the parser?  :")
-    path="experiments/"+name+"/"
+    if sys.argv[1]=="test":
+        name="test"
+        treebank="test"
+        comments="This parser was generated to test code"
+
+
+    else:
+        name=raw_input("What is the name of the parser?  :")
+        treebank=raw_input("Which treebank do you want to use?  :")
+        comments=raw_input("Any comments?  :")
+    
+    
+    path="experiments/"+name+"/"    
     os.system("mkdir "+path[:-1])
-    treebank=raw_input("Which treebank do you want to use?  :")
-    comments=raw_input("Any comments?  :")
     now=datetime.datetime.now()
+    
+
+
     log=open(path+"log","w")
     log.write("++++Parser Information++++\n")
     log.write("name: "+name+"\n")

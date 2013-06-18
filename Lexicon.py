@@ -21,7 +21,7 @@ class Lexicon(object):
     """
     extracts the lexical words from tree bank and stores them.
     """
-    def __init__(self,treebankName,name):
+    def __init__(self,treebankName,path):
 
         
         f=open(treebankName,"r")
@@ -47,7 +47,7 @@ class Lexicon(object):
         #extract the terminals
         index=0
         trees=treebank.split("\n")
-        outputTrees=open(name,"w")
+        outputTrees=open(path+"treebank","w")
         transform={}
         for tree in trees:
             words=tree.split()
@@ -68,7 +68,7 @@ class Lexicon(object):
         
 
         outputTrees.close()
-        pickle.dump( transform, open( name+".lex", "wb" ) )
+        pickle.dump( transform, open( path+"lexicon.lex", "wb" ) )
 
 
 

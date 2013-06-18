@@ -18,14 +18,42 @@
 # Koen Klinkers k.klinkers@gmail.com
 
 import sys
+import os
+import datetime
 from ParseTable import ParseTable
+from Parser import Parser
+from Lexicon import Lexicon
 
 def main():
+    name=raw_input("What is the name of the parser?  :")
+    path="experiments/"+name+"/"
+    os.system("mkdir "+path[:-1])
+    treebank=raw_input("Which treebank do you want to use?  :")
+    comments=raw_input("Any comments?  :")
+    now=datetime.datetime.now()
+    log=open(path+"log","w")
+    log.write("++++Parser Information++++\n")
+    log.write("name: "+name+"\n")
+    log.write("based on treebank: "+treebank+"\n")
+    log.write("time: "+str(now)+"\n")
+    log.write("comments:\n"+comments+"\n")
+
+
+    lex=Lexicon("treebank/"+treebank,path)
+    
     pt=ParseTable()
-    pt.generateFromTreeBank(sys.argv[1])
-    pt.texfile(True)
-    print pt
-    pt.save("test")
+    pt.generateFromTreeBank(path+"treebank")
+    pt.texfile(True,path)
+    pt.save(path+"parseTable")
+
+
+
+
+
+    log.close()
+
+
+
 #-------------------------------
 if __name__ == "__main__":
     main()

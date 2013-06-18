@@ -342,12 +342,12 @@ class ParseTable(object):
         (self.actions,self.gotos,self.rules) = pickle.load( open( filename+".pt", "rb" ) )
 
 
-    def texfile(self,PDF):
+    def texfile(self,PDF,path):
         """
         This creates a tex file with the parse table.
         If PDF is true the tex file is converted to a PDF. Only works on unix 
         """
-        tex=open("parsetable.tex","w")
+        tex=open(path+"parsetable.tex","w")
         tex.write("\\documentclass[11pt]{article}\n")
         tex.write("\\title{ParseTable}\n")
         tex.write("\\begin{document}\n")
@@ -403,7 +403,8 @@ class ParseTable(object):
         tex.close()
 
         if PDF:
-            os.system("pdflatex parsetable.tex >/dev/null")
+            os.system("pdflatex "+path+"parsetable.tex >/dev/null")
+            os.system("mv parsetable.pdf "+path)
             os.system("rm parsetable.aux parsetable.log")
 
     def getActions(self,state,lookahead):

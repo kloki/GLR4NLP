@@ -25,13 +25,14 @@ from Parser import Parser
 from Lexicon import Lexicon
 
 def main():
-    if sys.argv[1]=="test":
-        name="test"
-        treebank="test"
-        comments="This parser was generated to test code"
+    try:
+        if sys.argv[1]=="test":
+            name="test"
+            treebank="h8wsj"
+            comments="This parser was generated to test code"
 
 
-    else:
+    except:
         name=raw_input("What is the name of the parser?  :")
         treebank=raw_input("Which treebank do you want to use?  :")
         comments=raw_input("Any comments?  :")

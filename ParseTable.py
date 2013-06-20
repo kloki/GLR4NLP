@@ -205,7 +205,7 @@ class ParseTable(object):
         self.updateTableSymbols(tree.getAllSymbols())
         
 
-        
+        visitedStates=[]
         todo=[self.stateLabels[""]]
         while todo!=[]:
             
@@ -213,7 +213,6 @@ class ParseTable(object):
             currentState=todo.pop(0)
             #get nodes
             nodes=tree.getNodes(currentState.symbols)
-                
             for currentNode in nodes:
                 
                 sibling=tree.getSibling(currentNode)
@@ -236,9 +235,9 @@ class ParseTable(object):
                             else:
                                 newstate=self.updateStates(currentState,currentState.symbols[:]+[node.symbol],currentState.name+" "+node.symbol)
                             self.addAction(self.actions,currentState.index,node.symbol,"s"+str(newstate.index))
-                        if newstate not in todo:
+                        if newstate not in visitedStates:
                             todo.append(newstate)
-        
+                            visitedStates.append(newstate)
                 
     def updateStates(self,oldstate,symbols,newname):
         """
@@ -366,11 +365,12 @@ class ParseTable(object):
 
 
         for key in terminals:
-            if key =="$":
-                tex.write("&\\"+key)
-            else:
-                tex.write("&"+key)
+            key=key.replace("$","\\$")
+            key=key.replace("#","\\#")
+            tex.write("&"+key)
         for key in nonTerminals:
+            key=key.replace("$","\\$")
+            key=key.replace("%","\\%")
             tex.write("&"+key)
         tex.write("\\\\\n")        
         tex.write("\\hline\n")
@@ -380,8 +380,10 @@ class ParseTable(object):
             inverseStates[state.index]=name
         
         for state in self.actions.keys():
-            
-            tex.write(inverseStates[state])
+            statename=inverseStates[state]
+            statename=statename.replace("$","\\$")
+            statename=statename.replace("%","\\%")
+            tex.write(statename)
             tex.write("&")
             tex.write(str(state))
             for symbol in terminals:

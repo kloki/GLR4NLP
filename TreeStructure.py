@@ -24,6 +24,12 @@ class TreeStructure(object):
     leftMostChains=[]
     lookaheads={}
     def __init__(self,treestring):        
+
+        self.nodes={}
+        self.bottomNodes=[]
+        self.leftMostChains=[]
+        self.lookahead={}
+
         chunks=treestring.split()
 
         self.nodes[0]=Node(0,chunks[0][1:],-1,[])

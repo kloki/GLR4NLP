@@ -78,7 +78,8 @@ class Lexicon(object):
         pickle.dump( self.lexicon, open( path+"lexicon.lex", "wb" ) )
 
 
-
+    def load(self,filename):
+        self.lexicon=pickle.load(open(filename,"rb"))
 
 
     def __str__(self):

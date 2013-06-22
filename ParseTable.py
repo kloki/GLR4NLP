@@ -338,7 +338,7 @@ class ParseTable(object):
 
 
     def load(self,filename):
-        (self.actions,self.gotos,self.rules) = pickle.load( open( filename+".pt", "rb" ) )
+        (self.actions,self.gotos,self.rules) = pickle.load( open( filename, "rb" ) )
 
 
     def texfile(self,PDF,path):

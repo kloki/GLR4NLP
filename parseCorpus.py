@@ -30,13 +30,15 @@ def main():
     pt=ParseTable()
     lex=Lexicon()
     pt.load("experiments/"+parserName+"/parseTable.pt")
+    print pt
     lex.load("experiments/"+parserName+"/lexicon.lex")
+    print lex
     p=Parser(pt,lex)
     
 
     corpus=open("experiments/"+corpusName,"r").readlines()
     for line in corpus:
-        print line
+        p.parse(line)
 
 
 

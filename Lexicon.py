@@ -83,7 +83,7 @@ class Lexicon(object):
 
 
     def __str__(self):
-        pass
+        return str(self.lexicon.keys())
 
 
 
@@ -104,3 +104,17 @@ class Lexicon(object):
             for i in xrange(len(string)):
                 if string[i]==symbol:
                     return (string[:i],string[i:])
+
+
+
+    def getCategories(self,words):
+        categories=[]
+        for word in words:
+            if word not in self.lexicon:
+                categories.append("NP")
+            else:
+                categories.append(self.lexicon[word].getMostLikely())
+
+
+
+        return categories

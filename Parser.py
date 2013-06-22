@@ -32,9 +32,13 @@ class Parser(object):
 
     def parse(self, sentence):
         self.words=sentence.split()
-        self.categories=self.lexicon.transformWords(self.words)
+        self.categories=self.lexicon.getCategories(self.words)
         self.lookaheads=self.categories[:]
         self.lookaheads.append("$") #add end symbol
+        #reset
+        self.activePaths=[]
+        self.shiftPaths=[]
+        self.finishedPaths=[]
         #start parsing
         self.activePaths.append(ParsePath([0],"none",0,0))#no tree and log likelihood 0
         while self.activePaths!=[]: 

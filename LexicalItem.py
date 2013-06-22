@@ -46,7 +46,16 @@ class LexicalItem(object):
             count=count/total
             
 
+    def getMostLikely(self):
+        categorie=""
+        prob=0
+        for cat,p in self.categories.iteritems():
+            if p > prob:
+                prob=p
+                categorie=cat
 
+
+        return categorie
 
     # this way == and != work with this object
     def __eq__(self, other):

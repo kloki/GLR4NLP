@@ -65,7 +65,6 @@ class Lexicon(object):
         for tree in trees:
             words=tree.split()
             for i in xrange(len(words)):
-                print words[i]
                 if ")" in words[i]:
                     (lb,nonterminal)=self.breakup(words[i-1],"(")
                     (terminal,rb)=self.breakup(words[i],")")

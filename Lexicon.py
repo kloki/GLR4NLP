@@ -46,16 +46,26 @@ class Lexicon(object):
         treebank=treebank.replace(" (: :)","")
         treebank=treebank.replace(" (-LRB- -LRB-)","")
         treebank=treebank.replace(" (-RRB- -RRB-)","")
-        treebank=treebank.replace(") )","))")
-
-
+        treebank=treebank.replace(" )",")")
+        treebank=treebank.replace("(S@)","")
+        treebank=treebank.replace("(NP@)","")
+        treebank=treebank.replace("(PP@)","")
+        treebank=treebank.replace("(VP@)","")
+        treebank=treebank.replace("(SINV@)","")
+        treebank=treebank.replace("(PRN@)","")
+        treebank=treebank.replace("(FRAG@)","")
+        treebank=treebank.replace("(SBARQ@)","")
+        treebank=treebank.replace("(SBAR@)","")
+        treebank=treebank.replace("(SQ@)","")
+        treebank=treebank.replace("(ADJP@)","")
+        treebank=treebank.replace(" )",")")
         #extract the terminals
         trees=treebank.split("\n")
         outputTrees=open(path+"treebank","w")
         for tree in trees:
             words=tree.split()
             for i in xrange(len(words)):
-                
+                print words[i]
                 if ")" in words[i]:
                     (lb,nonterminal)=self.breakup(words[i-1],"(")
                     (terminal,rb)=self.breakup(words[i],")")

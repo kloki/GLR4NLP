@@ -16,7 +16,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 # Koen Klinkers k.klinkers@gmail.com
-
+from __future__ import division
 
 import cPickle as pickle
 import os
@@ -352,15 +352,30 @@ class ParseTable(object):
         nNT=len(self.gotos[0])
         numberOfStats=len(self.actions)
 
-        csv.write("Name,States,Actions"+","*(nT-1)+"Gotos"+","*(nNT-1)+"\n")
+        csv.write("Name,States,Actions"+","*(nT-1)+"Gotos"+","*(nNT)+"\n")
         
+        terminals=self.actions[0].keys()
+        nonTerminals=self.gotos[0].keys()
+
+        csv.write(",")
+        for key in terminals:
+            key=key.replace(",","k")
+            csv.write(","+key)
+        for key in nonTerminals:
+            key=key.replace(",","k")
+            csv.write(","+key)
+        csv.write("\n")   
+
+        
+
+
         inverseStates={}
         for name,state in self.stateLabels.iteritems():
             inverseStates[state.index]=name
 
         for state in self.actions.keys():
             statename=inverseStates[state]
-            statename=statename.replace("'","k")
+            statename=statename.replace(",","k")
             csv.write(statename)
             csv.write(",")
             csv.write(str(state))
@@ -387,7 +402,21 @@ class ParseTable(object):
         answer+="States:"+str(len(self.actions)) +"\n"
         answer+="Terminals:"+str(len(self.actions[0])) +"\n"
         answer+="Nonterminals:"+str(len(self.gotos[0])) +"\n"
-        answer+="Sparseness:"+"\n"
+        
+
+        #I dont care!!!
+        x=0
+        terminals=self.actions[0].keys()
+        nonTerminals=self.gotos[0].keys()
+
+        for state in self.actions.keys():
+            x+=self.actions[state].values().count([])
+            x+=self.gotos[state].values().count([])
+            
+        y=len(self.actions.keys())*(len(terminals)+len(nonTerminals))
+        ratio=(y-x)/y
+        answer+="Sparseness:"+str(ratio)+"\n"
+        answer+= str(x)+" of "+str(y)+" empty.\n"
 
         return answer
 

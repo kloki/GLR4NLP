@@ -67,7 +67,6 @@ class Lexicon(object):
 
         for lexicalitem in self.lexicon.itervalues():
             lexicalitem.normalise()
-        
         pickle.dump( self.lexicon, open( path+"lexicon.lex", "wb" ) )
 
 

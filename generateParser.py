@@ -28,7 +28,7 @@ def main():
     try:
         if sys.argv[1]=="test":
             name="test"
-            treebank="h8wsj"
+            treebank="test"
             comments="This parser was generated to test code"
 
 
@@ -51,22 +51,30 @@ def main():
     log.write("time: "+str(now)+"\n")
     log.write("comments:\n"+comments+"\n")
 
+    print "working..."
+    os.system("notify-send \"building parsetable\"")
+
+
     lex=Lexicon()
     lex.extractFromTreebank("treebank/"+treebank,path)
     
     pt=ParseTable()
     pt.generateFromTreeBank(path+"treebank")
-    pt.texfile(True,path)
-    pt.save(path+"parseTable")
-
-
+    #pt.texfile(False,path)
+    pt.csv(path)
+    pt.save(path+"parsetable")
+    
+    
+    log.write("++Parsetable Stats++\n")
+    log.write(pt.stats())
 
 
 
     log.close()
 
-
-
+    print "done!!!"
+    
+    os.system("notify-send \"Parsetable done.\"")
 #-------------------------------
 if __name__ == "__main__":
     main()

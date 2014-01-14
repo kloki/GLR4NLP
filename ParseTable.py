@@ -182,6 +182,8 @@ class ParseTable(object):
 
         with open(treeBank,"r") as f:
             trees=f.readlines()
+            #remove empty lines 
+            trees=filter(lambda a: a != "\n", trees)
             for tree in trees[:]:
                 self.generateFromTree(tree)
 
@@ -198,7 +200,6 @@ class ParseTable(object):
 
 
     def generateFromTree(self,treestring):
-        
 
         tree=TreeStructure(treestring)
         
@@ -339,6 +340,56 @@ class ParseTable(object):
 
     def load(self,filename):
         (self.actions,self.gotos,self.rules) = pickle.load( open( filename, "rb" ) )
+
+    def csv(self,path):
+        """
+        This creates a csv file with the parse table.
+         
+        """
+        csv=open(path+"parsetable.csv","w")
+        
+        nT=len(self.actions[0])
+        nNT=len(self.gotos[0])
+        numberOfStats=len(self.actions)
+
+        csv.write("Name,States,Actions"+","*(nT-1)+"Gotos"+","*(nNT-1)+"\n")
+        
+        inverseStates={}
+        for name,state in self.stateLabels.iteritems():
+            inverseStates[state.index]=name
+
+        for state in self.actions.keys():
+            statename=inverseStates[state]
+            statename=statename.replace("'","k")
+            csv.write(statename)
+            csv.write(",")
+            csv.write(str(state))
+            for symbol in terminals:
+                csv.write(",")
+                for action in self.actions[state][symbol]:
+                    csv.write(action+" ")
+            for symbol in nonTerminals:
+                csv.write(",")
+                for goto in self.gotos[state][symbol]:
+                    csv.write(str(goto)+" ")
+            csv.write("\n")
+
+
+        csv.close()
+
+    def stats(self):
+        """
+        Returns some helpfull statistics
+        """
+        
+        answer=""
+
+        answer+="States:"+str(len(self.actions)) +"\n"
+        answer+="Terminals:"+str(len(self.actions[0])) +"\n"
+        answer+="Nonterminals:"+str(len(self.gotos[0])) +"\n"
+        answer+="Sparseness:"+"\n"
+
+        return answer
 
 
     def texfile(self,PDF,path):

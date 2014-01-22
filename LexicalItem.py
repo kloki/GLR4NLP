@@ -42,10 +42,9 @@ class LexicalItem(object):
 
     def normalise(self):
         total=sum(self.categories.itervalues())
-        for count in self.categories.itervalues():
-            count=count/total
+        for key in self.categories.keys():
+            self.categories[key]=self.categories[key]/total
             
-
     def getMostLikely(self):
         categorie=""
         prob=0

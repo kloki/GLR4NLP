@@ -65,8 +65,8 @@ class Lexicon(object):
 
         outputTrees.close()
 
-        for lexicalitem in self.lexicon.itervalues():
-            lexicalitem.normalise()
+        for key in self.lexicon.keys():
+            self.lexicon[key].normalise()
         pickle.dump( self.lexicon, open( path+"lexicon.lex", "wb" ) )
 
 
@@ -75,8 +75,11 @@ class Lexicon(object):
 
 
     def __str__(self):
-        return str(self.lexicon.keys())
-
+        string=""
+        for key in self.lexicon.keys():
+            string+=str(self.lexicon[key])+"\n"
+        
+        return string
 
 
     def updateLexicon(self,terminal,nonterminal):

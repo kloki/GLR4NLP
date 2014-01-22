@@ -29,16 +29,16 @@ def main():
     corpusName=sys.argv[2]
     pt=ParseTable()
     lex=Lexicon()
-    pt.load("experiments/"+parserName+"/parseTable.pt")
-    print pt
+    print "loading parsetable....."
+    pt.load("experiments/"+parserName+"/parsetable.pt")
     lex.load("experiments/"+parserName+"/lexicon.lex")
-    print lex
-    p=Parser(pt,lex)
+    print "done"
     
-
-    corpus=open("experiments/"+corpusName,"r").readlines()
+    p=Parser(pt,lex)
+    corpus=open(corpusName,"r").readlines()
     for line in corpus:
-        p.parse(line)
+         print "hello"
+         p.parse(line)
 
 
 

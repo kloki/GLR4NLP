@@ -29,6 +29,7 @@ class Parser(object):
     def __init__(self,pt,lex):
         self.parseTable=pt
         self.lexicon=lex
+        print self.lexicon
 
     def parse(self, sentence):
         self.words=sentence.split()

@@ -1,2 +1,1 @@
 (TOP (S (NP (DET a ) (N man)) (VP (V saw) (NP (N cars)))))
-(TOP (S (S (NP n) (VP v (NP det n))) (PP prep (NP n))

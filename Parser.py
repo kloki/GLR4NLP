@@ -29,7 +29,7 @@ class Parser(object):
     def __init__(self,pt,lex):
         self.parseTable=pt
         self.lexicon=lex
-        print self.lexicon
+        
 
     def parse(self, sentence):
         self.words=sentence.split()
@@ -52,6 +52,7 @@ class Parser(object):
     def reduceUntillShift(self):
         while self.activePaths!=[]:
             path=self.activePaths.pop()
+            print self.lookaheads
             pathActions=self.parseTable.getActions(path.getState(),self.lookaheads[0])
             
             if pathActions!=[]:#table empty, doesnt belong to grammar stop parsing    

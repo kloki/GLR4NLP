@@ -33,7 +33,6 @@ def main():
     pt.load("experiments/"+parserName+"/parsetable.pt")
     lex.load("experiments/"+parserName+"/lexicon.lex")
     print "done"
-    
     p=Parser(pt,lex)
     corpus=open(corpusName,"r").readlines()
     for line in corpus:

@@ -25,7 +25,7 @@ class LexicalItem(object):
 
     def __init__(self,symbol,categorie):
         self.symbol=symbol
-        self.categories[categorie]=1
+        self.categories=categorie
 
     def __str__(self):
         string=""

@@ -15,7 +15,8 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
-import cPickle as pickle
+#import cPickle as pickle
+import pickle 
 from LexicalItem import LexicalItem
 class Lexicon(object):
     
@@ -67,13 +68,34 @@ class Lexicon(object):
 
         for key in self.lexicon.keys():
             self.lexicon[key].normalise()
-        pickle.dump( self.lexicon, open( path+"lexicon.lex", "wb" ) )
-
+       
 
     def load(self,filename):
-        self.lexicon=pickle.load(open(filename,"rb"))
+        templex=pickle.load(open(filename,"rb"))
+        self.lexicon={} 
+        for word,categories in templex.items():
+            self.lexicon[word]=LexicalItem(word,categories)
+        
 
 
+    def save(self,path):
+        """
+        Removing object in data structure
+        dict[word]=lexicalitem
+        dict[word]={categoriedict}
+        """
+        templex={}
+        for word in self.lexicon.keys():
+            
+            templex[word]=self.lexicon[word].categories
+
+        
+        lf= open( path+".lex", "wb" )
+        pickle.dump( templex, lf )
+        lf.close()
+        
+    
+    
     def __str__(self):
         string=""
         for key in self.lexicon.keys():
@@ -84,7 +106,7 @@ class Lexicon(object):
 
     def updateLexicon(self,terminal,nonterminal):
         if terminal not in self.lexicon:
-            self.lexicon[terminal]=LexicalItem(terminal,nonterminal)
+            self.lexicon[terminal]=LexicalItem(terminal,{nonterminal:1})
         else:
             self.lexicon[terminal].updateCategorie(nonterminal)
 
@@ -106,9 +128,9 @@ class Lexicon(object):
         categories=[]
         for word in words:
             if word not in self.lexicon:
-                categories.append("NP")
+                categories.append("nn")
             else:
-                categories.append(self.lexicon[word].getMostLikely())
+                categories.append(self.lexicon[word].getMostLikely().lower())
 
 
 

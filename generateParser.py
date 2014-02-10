@@ -57,7 +57,7 @@ def main():
 
     lex=Lexicon()
     lex.extractFromTreebank("treebank/"+treebank,path)
-    
+    lex.save(path+"lexicon")
     pt=ParseTable()
     pt.generateFromTreeBank(path+"treebank")
     #pt.texfile(False,path)

@@ -17,32 +17,19 @@
 #
 # Koen Klinkers k.klinkers@gmail.com
 
+#scripts TOP(..) to any treebank
 import sys
-import os
-import datetime
-from ParseTable import ParseTable
-from Parser import Parser
-from Lexicon import Lexicon
 
 def main():
-    parserName=sys.argv[1]
-    corpusName=sys.argv[2]
-    pt=ParseTable()
-    lex=Lexicon()
-    print "loading parsetable....."
-    pt.load("experiments/"+parserName+"/parsetable.pt")
-    lex.load("experiments/"+parserName+"/lexicon.lex")
-    print "done"
-    p=Parser(pt,lex)
-    corpus=open(corpusName,"r").readlines()
-    if corpus[-1]=="\n":
-        corpus=corpus[:-1]
-    for line in corpus:
-         print line
-         p.parse(line)
-         
+    treebank=open(sys.argv[1],"r").read()
+    if treebank[-1]!="\n":
+        treebank+="\n"
 
-
+    treebank=treebank.replace("\n",")\n(TOP ")
+    treebank="(TOP " + treebank[:-5]
+    f=open(sys.argv[2],"w")
+    f.write(treebank)
+    f.close
 #-------------------------------
 if __name__ == "__main__":
     main()

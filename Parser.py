@@ -36,23 +36,24 @@ class Parser(object):
         self.categories=self.lexicon.getCategories(self.words)
         self.lookaheads=self.categories[:]
         self.lookaheads.append("$") #add end symbol
+        print self.lookaheads
         #reset
         self.activePaths=[]
         self.shiftPaths=[]
         self.finishedPaths=[]
         #start parsing
         self.activePaths.append(ParsePath([0],"none",0,0))#no tree and log likelihood 0
-        while self.activePaths!=[]: 
+        while self.activePaths!=[]:
+            print self.activePaths[0]
             self.reduceUntillShift()
             self.shift()
-            self.prunePaths()
+            #self.prunePaths()
         
         self.printTrees()
 
     def reduceUntillShift(self):
         while self.activePaths!=[]:
             path=self.activePaths.pop()
-            print self.lookaheads
             pathActions=self.parseTable.getActions(path.getState(),self.lookaheads[0])
             
             if pathActions!=[]:#table empty, doesnt belong to grammar stop parsing    
@@ -103,9 +104,22 @@ class Parser(object):
                 print str(path.loglikelihood)[:6]+" "+self.lexicalize(path.getTree())
 
     def lexicalize(self,tree):
-        for word in self.words:
-            tree=tree.replace(" "+self.lexicon.getCategorie(word)," ("+self.lexicon.getCategorie(word).upper()+" "+word+" )",1)
-            tree=tree.replace(" )",")")
-        return tree
+        #how should I do this pretty??
+        pieces=tree.split()
+        wordss=self.words[:]
+        ltree=""
+
+        for piece in pieces: 
+            if "(" in piece:
+                ltree+=piece + " "
+            elif ")" in piece:
+                ltree+=piece
+            else:
+                treelet="("+piece.upper()+" "+wordss.pop(0)+")"
+                ltree+=treelet
+
+
+        
+        return ltree
 
 

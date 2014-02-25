@@ -54,9 +54,11 @@ def main():
     print "working..."
     os.system("notify-send \"building parsetable\"")
 
+    os.system("./TOPify.py treebank/"+treebank+" "+path+"raw")
+
 
     lex=Lexicon()
-    lex.extractFromTreebank("treebank/"+treebank,path)
+    lex.extractFromTreebank(path+"raw",path)
     lex.save(path+"lexicon")
     pt=ParseTable()
     pt.generateFromTreeBank(path+"treebank")

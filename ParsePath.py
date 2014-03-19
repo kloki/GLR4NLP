@@ -62,7 +62,7 @@ class ParsePath(object):
         try:
             return (self.stack[-2],self.stack[-1])
         except:
-            return 0 #reduce not possible
+            return 0 #reduce not possible something went wrong
         
     def shift(self,terminal):
         newstack=self.stack[:]

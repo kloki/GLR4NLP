@@ -44,7 +44,6 @@ class Parser(object):
         #start parsing
         self.activePaths.append(ParsePath([0],"none",0,0))#no tree and log likelihood 0
         while self.activePaths!=[]:
-            print self.activePaths[0]
             self.reduceUntillShift()
             self.shift()
             #self.prunePaths()
@@ -66,8 +65,10 @@ class Parser(object):
                         newpath=path.addAction(action)
                         goto=newpath.reduce(self.parseTable.getRule(action))
                         if goto!=0:#in a proper table this will never happen. (Reduce action that is not possible)
-                            newpath.goto(self.parseTable.getGOTO(goto[0],goto[1]))
-                            self.activePaths.append(newpath)
+                            gotoState=self.parseTable.getGOTO(goto[0],goto[1])
+                            if gotoState!=-1:
+                                newpath.goto(self.parseTable.getGOTO(goto[0],goto[1]))
+                                self.activePaths.append(newpath)
                         
 
     def shift(self):

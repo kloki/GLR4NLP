@@ -493,7 +493,10 @@ class ParseTable(object):
         return self.actions[state][lookahead]
 
     def getGOTO(self,state,nonTerminal):
-        return self.gotos[state][nonTerminal][0]#for now i am assumming there can be only one goto state
-
+        try:
+            return self.gotos[state][nonTerminal][0]#for now i am assumming there can be only one goto state
+        except:
+            return -1
     def getRule(self,index):
         return self.rules[int(index[1:])]
+    
